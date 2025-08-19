@@ -151,9 +151,40 @@ class LoanApplication(models.Model):
     # Génération de sequence lors de la création d'un enregistrement et verifie si une demande existe déjà pour la même campagne, il écrase l'ancienne demande
     @api.model
     def create(self, vals):
-        """Générer la référence de la demande"""
-        if vals.get('Nouveau', '/') == '/':
+        """Générer la référence de la demande et empêcher les doublons"""
+        
+        # Vérifier s'il existe déjà une demande pour cet employé et cette campagne
+        if vals.get('employee_id') and vals.get('campaign_id'):
+            existing_loan = self.search([
+                ('employee_id', '=', vals.get('employee_id')),
+                ('campaign_id', '=', vals.get('campaign_id'))
+            ], limit=1)
+            
+            if existing_loan:
+                # Mettre à jour l'enregistrement existant au lieu de créer un nouveau
+                _logger.info(
+                    "Demande existante trouvée (ID: %s) pour l'employé %s et la campagne %s. Mise à jour...", 
+                    existing_loan.id, 
+                    vals.get('employee_id'), 
+                    vals.get('campaign_id')
+                )
+                
+                # Supprimer les champs qui ne doivent pas être mis à jour
+                update_vals = vals.copy()
+                update_vals.pop('employee_id', None)  # Ne pas changer l'employé
+                update_vals.pop('campaign_id', None)  # Ne pas changer la campagne
+                
+                # Garder la référence existante si pas de nouvelle référence
+                if 'reference' not in update_vals or update_vals.get('reference') == '/':
+                    update_vals.pop('reference', None)
+                
+                existing_loan.write(update_vals)
+                return existing_loan
+        
+        # Si aucun doublon, créer normalement avec génération de référence
+        if vals.get('reference', '/') == '/':
             vals['reference'] = self.env['ir.sequence'].next_by_code('loan.application')
+        
         return super(LoanApplication, self).create(vals)
 
 
