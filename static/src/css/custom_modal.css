@@ -1,0 +1,20 @@
+.modal-header{
+    background-color: #003366 !important; /* Couleur au survol */
+}
+
+.modal-header h4{
+    color: white !important;
+    font-weight: bold;
+    text-align: center;
+}
+
+.modal-header button{
+    background-color:#CC3333;
+    color: white !important;
+}
+
+
+/* RENDRE LES BOUTS ARRONDIS DES CADRES QUI AFFICHES LES MONTANTS  */
+.custom-block {
+    border-radius: 15px !important; /* Arrondir les bords du cadre */
+}

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Définition de l'action du rapport -->
+    <record id="action_report_loan_application" model="ir.actions.report">
+        <field name="name">Récapitulatif de la demande</field>
+        <field name="model">loan.application</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">loan_management.loan_application_report</field>
+        <field name="report_file">loan_management.loan_application_report</field>
+        <field name="print_report_name">'Récapitulatif_Prêt_%s' % object.reference</field>
+        <field name="binding_model_id" ref="model_loan_application"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Template du rapport -->
+    <template id="loan_application_report">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h3>Port Autonome d'Abidjan</h3>
+                            <h4>Récapitulatif de la Demande de Prêt Scolaire</h4>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <table class="table table-sm">
+                                <tr>
+                                    <td width="30%"><strong>Référence</strong></td>
+                                    <td><span t-field="o.reference"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Matricule</strong></td>
+                                    <td><span t-field="o.employee_id.matricule"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nom</strong></td>
+                                    <td><span t-field="o.employee_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Prénoms</strong></td>
+                                    <td><span t-field="o.employee_id.prenoms"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Direction</strong></td>
+                                    <td><span t-field="o.employee_id.nom_direction"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Montant demandé</strong></td>
+                                    <td><span t-field="o.amount_requested"/> FCFA</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Modalité de remboursement</strong></td>
+                                    <td><span t-field="o.modalite_remboursement"/> mois</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Téléphone</strong></td>
+                                    <td><span t-field="o.telephone"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email</strong></td>
+                                    <td><span t-field="o.email"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <small>
+                                    Ce document est un récapitulatif de votre demande de prêt scolaire.
+                                    Il ne constitue pas une acceptation de la demande.
+                                    Vous serez notifié(e) de la suite donnée à votre demande dans les plus brefs délais.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

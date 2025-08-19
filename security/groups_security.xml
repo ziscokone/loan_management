@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Super Admin Prêt scolaire -->
+    <record model="res.groups" id="super_admin_pret_scolaire">
+        <field name="name">Super Admin Prêt Scolaire</field>
+    </record>
+
+    <!-- Manager Prêt scolaire -->
+    <record model="res.groups" id="manager_pret_scolaire">
+        <field name="name">Manager Prêt Scolaire </field>
+    </record>
+
+        <!-- User Prêt scolaire -->
+    <record model="res.groups" id="user_pret_scolaire">
+        <field name="name">User Prêt Scolaire </field>
+    </record>
+</odoo>

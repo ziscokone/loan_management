@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Vue Form -->
+    <record id="view_loan_campaign_form" model="ir.ui.view">
+        <field name="name">loan.campaign.form</field>
+        <field name="model">loan.campaign</field>
+        <field name="arch" type="xml">
+            <form class="o_form_view o_form_sheet">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,validation,suivie,closed" invisible="1"/>
+                    <button name="action_open_campaign" 
+                            confirm="Voulez-vous ouvrir cette campagne ?" 
+                            type="object" string="Ouvrir" class="btn-success" 
+                            icon="fa-folder-open"
+                            invisible="state == 'open' or state == 'closed'  or state =='validation' or state == 'suivie'"/>
+                    <button name="action_validate_campaign" 
+                            confirm="Voulez-vous ouvrir le comité de validation ?" 
+                            type="object" string="Validation" class="btn-info" 
+                            icon="fa-check-square"
+                            invisible="state == 'closed' or state == 'draft' or state =='validation' or state == 'suivie'"/>
+                    <button name="action_suivie_campaign" 
+                            confirm="Souhaitez-vous suivre cette campagne ? Veuillez noter qu'en confirmant, un e-mail de validation des montants accordés sera automatiquement envoyé à l'ensemble des demandeurs concernés." 
+                            type="object" string="Suivi" class="btn-warning" 
+                            icon="fa-line-chart"
+                            invisible="state == 'closed' or state == 'draft' or state == 'suivie' or state == 'open'"/>
+                    <button name="action_close_campaign" 
+                            confirm="Voulez-vous clôturer cette campagne ?" 
+                            type="object" string="Clôturée" class="btn-danger" 
+                            icon="fa-lock"
+                            invisible="state == 'closed' or state == 'draft' or state == 'open' or state =='validation'"/>
+                </header>
+                
+                    <widget name="web_ribbon" title="Clôturée" bg_color="bg-danger" invisible="state != 'closed'"/>
+                    <widget name="web_ribbon" title="En validation" bg_color="bg-info" invisible="state != 'validation'"/>
+                    <widget name="web_ribbon" title="En suivi" bg_color="bg-warning" invisible="state != 'suivie'"/>
+                    <widget name="web_ribbon" title="Brouillon" bg_color="bg-info" invisible="state != 'draft'"/>
+                    <widget name="web_ribbon" title="Ouverte" bg_color="bg-success" invisible="state != 'open'"/>
+
+                    <!-- <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom de la campagne..." readonly="state in ['open', 'closed', 'suivie', 'validation']" class="text-break"/>
+                        </h1>
+                    </div> -->
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Nom de la campagne..." readonly="state in ['open', 'closed', 'suivie', 'validation']" class="text-break"/>
+                            <field name="start_date" placeholder="Date début..." readonly="state in ['open', 'closed', 'suivie', 'validation']"/>
+                            <field name="end_date" placeholder="Date fin..." readonly="state in ['open', 'closed', 'suivie', 'validation']"/>
+                        </group>
+                        <group>
+                            <field name="total_budget" readonly="state in ['open', 'closed', 'suivie', 'validation']"/>
+                            <field name="budget_restant" invisible="1"/>
+                            <field name="responsable" readonly="state in ['open', 'closed', 'suivie', 'validation']"/>
+                            <field name="post_responsable" readonly="state in ['open', 'closed', 'suivie', 'validation']"/>
+                        </group>
+                        <group></group>
+                        <group>
+                            <field name="description" invisible="1" readonly="state in ['open', 'closed', 'suivie', 'validation']"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Informations des responsables à contacter" name="contacts">
+                            <div class="alert alert-info" role="alert">
+                                <strong>Note :</strong> Ces informations seront utilisées dans les communications par email aux demandeurs.
+                            </div>
+                                <group string="Informations des responsables à contacter">
+                                    <group>
+                                        <field name="responsable_1" placeholder="Nom du responsable 1"/>
+                                        <field name="contact_responsable_1" placeholder="Contact du responsable 1"/>
+                                    </group>
+                                    <group>
+                                        <field name="responsable_2" placeholder="Nom du responsable 2"/>
+                                        <field name="contact_responsable_2" placeholder="Contact du responsable 2"/>
+                                    </group>
+                                    <group>
+                                        <field name="responsable_3" placeholder="Nom du responsable 3"/>
+                                        <field name="contact_responsable_3" placeholder="Contact du responsable 3"/>
+                                    </group>
+                                </group>
+                        </page>
+                    </notebook>
+                
+                <!-- Chatter -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste -->
+    <record id="view_loan_campaign_tree" model="ir.ui.view">
+        <field name="name">loan.campaign.tree</field>
+        <field name="model">loan.campaign</field>
+        <field name="arch" type="xml">
+            <tree>
+                
+                <field name="create_date"/>
+                <field name="name"/>
+                <field name="responsable"/>
+                <field name="post_responsable"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="total_budget"/>
+                <!-- <field name="budget_restant" sum="Restant"/> -->
+                <!-- <field name="requested_amount" sum="Demandé"/>
+                <field name="validated_amount" sum="Validé"/> -->
+                <field name="state" widget="badge" decoration-info="state == 'draft'" 
+                                                decoration-success="state == 'open'"
+                                                decoration-warning="state == 'validation'"
+                                                decoration-primary="state == 'suivie'"
+                                                decoration-danger="state == 'closed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_loan_campaign" model="ir.actions.act_window">
+        <field name="name">Campagnes de Prêt</field>
+        <field name="res_model">loan.campaign</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_loan_root" name="Prêt Scolaire"/>
+    <menuitem id="menu_loan_campaign" name="Campagnes" parent="menu_loan_root" action="action_loan_campaign"/>
+</odoo>
+
+
+
+
+    <!-- <record id="view_loan_campagn_tree" model="ir.ui.view">
+        <field name="name">loan.campaign.tree</field>
+        <field name="model">loan.campaign</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="state == 'closed'"
+                decoration-success="state == 'open'"
+                decoration-info="state == 'draft'"
+                decoration-primary="state == 'validation'"
+                decoration-muted="state == 'suivie'">
+                <field name="name"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="total_budget"/>
+                <field name="budget_restant"/>
+                <field name="state" widget="badge" 
+                    decoration-danger="state == 'closed'"
+                    decoration-success="state == 'open'"
+                    decoration-info="state == 'draft'"
+                    decoration-primary="state == 'validation'"
+                    decoration-muted="state == 'suivie'"/>
+            </tree>
+        </field>
+    </record> -->

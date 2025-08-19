@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="loan_tracking_form_template" name="Suivi de demande de prêt">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <!-- En-tête de la page -->
+                        <div class="text-center mb-5">
+                            <h2 class="display-4 mb-3">Suivi de votre demande</h2>
+                            <p class="text-muted">Consultez l'état d'avancement de votre demande de prêt</p>
+                        </div>
+                        
+                        <!-- Messages d'erreur ou de succès -->
+                        <div t-if="error_message" class="alert alert-danger shadow-sm" role="alert">
+                            <i class="fa fa-exclamation-circle me-2"/>
+                            <span t-esc="error_message"/>
+                        </div>
+
+                        <!-- Formulaire de recherche -->
+                        <div class="card shadow-sm border-0 rounded-3 mb-5">
+                            <div class="card-body p-4">
+                                <form action="/suivi-demande/recherche" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control form-control-lg" 
+                                               name="reference" id="reference" 
+                                               t-att-value="reference" required="required"
+                                               placeholder="Entrez votre numéro de référence"/>
+                                        <label for="reference">Numéro de référence</label>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                                        <i class="fa fa-search me-2"/>Rechercher ma demande
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Affichage des résultats -->
+                        <div t-if="application" class="card shadow border-0 rounded-3">
+                            <!-- Le reste du code reste identique ... -->
+                            <div class="card-header bg-light py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="mb-0">Détails de la demande</h4>
+                                    <span t-esc="application['state']" 
+                                          t-attf-class="badge rounded-pill fs-6 {{ 
+                                              'bg-warning' if application['state'] == 'pending'
+                                              else 'bg-success' if application['state'] == 'approved'
+                                              else 'bg-danger' 
+                                          }}"/>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <!-- Informations principales -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="small text-muted mb-1">Référence</div>
+                                        <div class="h5 mb-3"><t t-esc="application['reference']"/></div>
+                                        
+                                        <div class="small text-muted mb-1">Nom du demandeur</div>
+                                        <div class="h5 mb-3"><t t-esc="application['applicant_name']"/></div>
+                                        
+                                        <div class="small text-muted mb-1">Matricule</div>
+                                        <div class="h5"><t t-esc="application['matricule']"/></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="small text-muted mb-1">Montant demandé</div>
+                                        <div class="h4 text-primary mb-3">
+                                            <t t-esc="application['amount_requested']"/> FCFA
+                                        </div>
+                                        
+                                        <div class="small text-muted mb-1">Date de création</div>
+                                        <div class="h5 mb-3"><t t-esc="application['create_date']"/></div>
+                                        
+                                        <div class="small text-muted mb-1">Campagne</div>
+                                        <div class="h5"><t t-esc="application['campaign_name']"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Informations de contact -->
+                                <div class="bg-light p-4 rounded-3 mb-4">
+                                    <h5 class="mb-3">Informations de contact</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <i class="fa fa-envelope text-primary me-3"/>
+                                                <div>
+                                                    <div class="small text-muted">Email</div>
+                                                    <div><t t-esc="application['email']"/></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <i class="fa fa-phone text-primary me-3"/>
+                                                <div>
+                                                    <div class="small text-muted">Téléphone</div>
+                                                    <div><t t-esc="application['telephone']"/></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Département -->
+                                <div class="mb-4">
+                                    <div class="small text-muted mb-1">Département</div>
+                                    <div class="h5"><t t-esc="application['departement']"/></div>
+                                </div>
+
+                                <!-- Justification -->
+                                <div class="bg-light p-4 rounded-3">
+                                    <h5 class="mb-3">Justification de la demande</h5>
+                                    <p class="mb-0"><t t-esc="application['justification']"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

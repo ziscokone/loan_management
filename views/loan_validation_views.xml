@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_loan_validation_wizard_form" model="ir.ui.view">
+        <field name="name">loan.validation.wizard.form</field>
+        <field name="model">loan.validation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Validation de la demande">
+                <div class="alert alert-info" role="alert">
+                    <i class="fa fa-info-circle"/> Veuillez vérifier les informations ci-dessous avant de valider la demande.
+                </div>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="campaign_name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Informations budgétaires">
+                            <field name="remaining_budget" 
+                                   class="oe_inline"/>
+                            <field name="amount_requested" 
+                                   class="oe_inline"/>
+                        </group>
+                        <group string="Montant à accorder">
+                            <field name="approved_amount" 
+                                   class="oe_inline"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-warning" role="alert" invisible="remaining_budget >= approved_amount">
+                        <i class="fa fa-warning"/> Attention : Le montant accordé dépasse le budget restant !
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="amount_requested >= approved_amount">
+                        <i class="fa fa-warning"/> Attention : Le montant accordé dépasse le montant demandé !
+                    </div>
+                </sheet>
+                <footer class="modal-footer justify-content-between">
+                    <button string="Annuler" 
+                            icon="fa-times" 
+                            class="btn btn-danger" 
+                            special="cancel"/>
+                    <button name="validate_loan" 
+                            string="Valider la demande" 
+                            type="object" 
+                            icon="fa-check" 
+                            class="btn btn-success"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

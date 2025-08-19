@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire pour l'import -->
+    <record id="view_employee_import_form" model="ir.ui.view">
+        <field name="name">paa.employee.import.form</field>
+        <field name="model">paa.employee.import</field>
+        <field name="arch" type="xml">
+            <form string="Import des employés">
+                <sheet>
+                    <group>
+                        <field name="file" filename="filename"/>
+                        <field name="filename" invisible="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="import_employee_data" string="Importer" type="object" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour le wizard d'import -->
+    <record id="action_employee_import" model="ir.actions.act_window">
+        <field name="name">Import des employés</field>
+        <field name="res_model">paa.employee.import</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

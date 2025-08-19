@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+<!-- TEMPLATE DE VISUALISATION DE LA LISTE DES CAMPAGNES  -->
+    <template id="campagne_template_id" name="campagne">
+        <t t-call="website.layout">
+            <div class="container p-5">
+                <h4>Liste des Campagnes</h4>
+                <table class="table table-sm">
+                    <tr>
+                            <th>Nom</th>
+                            <th>Date Début</th>
+                            <th>Date Fin</th>
+                            <th>Budget Total</th>
+                        </tr>
+                        <t t-foreach="campagnes" t-as="campagne">
+                            <tr>
+                                <td><t t-esc="campagne['name']"/></td>
+                                <td><t t-esc="campagne['start_date']"/></td>
+                                <td><t t-esc="campagne['end_date']"/></td>
+                                <td><t t-esc="campagne['total_budget']"/></td>
+                            </tr>
+                        </t>
+                    </table>
+                </div>
+        </t>
+    </template>
+
+<!-- TEMPLATE DE CREATION DE CAMPAGNES  -->
+    <template id="create_campagne_template_id" name="create_campagne">
+        <t t-call="website.layout">
+            <div class="container p-5">
+                <h4>Demande de prêt Scolaire</h4>
+                <form method="post">
+                    <div class="form-group">
+                        <label for="name" class="control-label">Nom de la campagne</label>
+                        <input type="text" class="form-control" name="name" placeholder="Entrez le nom de la campagne"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="start_date" class="control-label">Date de début</label>
+                        <input type="date" class="form-control" name="start_date" />
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date" class="control-label">Date de fin</label>
+                        <input type="date" class="form-control" name="end_date" />
+                    </div>
+                    <div class="form-group">
+                        <label for="total_budget" class="control-label">Budget total</label>
+                        <input type="number" class="form-control" name="total_budget" placeholder="Entrez le budget total" step="0.01" min="0"/>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-success" value="Enregistrer" />
+                    </div> 
+                </form>
+            </div>
+        </t>
+    </template>
+</odoo>

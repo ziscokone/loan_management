@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Vue Kanban -->
+    <record id="view_comite_validation_kanban" model="ir.ui.view">
+        <field name="name">comite.validation.kanban</field>
+        <field name="model">comite.validation</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="campaign_id"/>
+                <field name="total_demandes"/>
+                <field name="montant_total"/>
+                <field name="montant_direction"/>
+                <field name="total_montant_accorde"/>
+                <field name="budget_previsionnel"/>
+                <field name="date_validation"/>
+                <field name="direction_filter"/>
+                
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_comite_kanban">
+                            <div class="oe_kanban_details p-3">
+                                <div class="o_kanban_record_top mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="o_kanban_record_headings">
+                                            <strong class="o_kanban_record_title">
+                                                <span class="text-primary h5"><field name="name"/></span>
+                                            </strong>
+                                        </div>
+                                        <div class="o_kanban_record_subtitle badge badge-light px-2 py-1">
+                                            <i class="fa fa-calendar text-secondary mr-1"/> <field name="date_validation"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_kanban_record_body">
+                                    <!-- Design Card avec statistiques -->
+                                    <div class="row">
+                                        <div class="col-6 mb-3">
+                                            <div class="stat-card bg-info-light p-2 rounded text-center h-100">
+                                                <i class="fa fa-users text-info fa-2x mb-1"/>
+                                                <div class="stat-value text-info font-weight-bold h4 mb-0">
+                                                    <field name="total_demandes"/>
+                                                </div>
+                                                <div class="stat-label small">Demandes</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-6 mb-3">
+                                            <div class="stat-card bg-primary-light p-2 rounded text-center h-100">
+                                                <i class="fa fa-money text-primary fa-2x mb-1"/>
+                                                <div class="stat-value text-primary font-weight-bold h4 mb-0">
+                                                    <field name="montant_total"/>
+                                                </div>
+                                                <div class="stat-label small">Total FCFA</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-6 mb-3">
+                                            <div class="stat-card bg-success-light p-2 rounded text-center h-100">
+                                                <i class="fa fa-check-circle text-success fa-2x mb-1"/>
+                                                <div class="stat-value text-success font-weight-bold h4 mb-0">
+                                                    <field name="total_montant_accorde"/>
+                                                </div>
+                                                <div class="stat-label small">Accordé FCFA</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-6 mb-3">
+                                            <div class="stat-card bg-warning-light p-2 rounded text-center h-100">
+                                                <i class="fa fa-money text-warning fa-2x mb-1"/>
+                                                <div class="stat-value text-warning font-weight-bold h4 mb-0">
+                                                    <field name="budget_previsionnel"/>
+                                                </div>
+                                                <div class="stat-label small">Budget FCFA</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <div class="o_kanban_record_bottom mt-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="oe_kanban_bottom_left">
+                                            <t t-if="record.direction_filter.raw_value">
+                                                <span class="badge badge-pill badge-info px-2 py-1">
+                                                    <i class="fa fa-building mr-1"/> <field name="direction_filter"/>
+                                                </span>
+                                            </t>
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <span class="badge badge-pill badge-primary px-2 py-1">
+                                                <i class="fa fa-tag mr-1"/> <field name="campaign_id"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+
+    <!-- Vue Form -->
+    <record id="view_comite_validation_form" model="ir.ui.view">
+        <field name="name">comite.validation.form</field>
+        <field name="model">comite.validation</field>
+        <field name="arch" type="xml">
+           <form>
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Bloc pour le nombre total de demandes -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block primary-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-users fa-2x text-info me-2"></i>
+                                    <h5 class="font-weight-bold text-info mb-0">Nombre Total de Demande</h5>
+                                </div>
+                                <field name="total_demandes" readonly="1" class="h5 font-weight-bold text-info o_field_widget"></field>
+                            </div>
+                        </div>
+
+
+                        <!-- Bloc pour le montant total des demandes -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-money fa-2x text-primary me-2"></i>
+                                    <h5 class="font-weight-bold text-primary mb-0">Montant Total des Demandes</h5>
+                                </div>
+                                <field name="montant_total" readonly="1" class="h5 font-weight-bold text-primary o_field_widget"></field> 
+                                <strong class="text-primary"> FCFA</strong>
+                            </div>
+                        </div>
+
+
+                        <!-- Bloc pour Montant par Direction  -->
+                        <div class="col-lg-2 mb-4" invisible="not direction_filter">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-building fa-2x text-info me-2"></i>
+                                    <h5 class="font-weight-bold text-info mb-0  o_field_widget">Montant total <field name="direction_filter" nolabel="1" readonly="1" class="d-inline"/></h5>
+                                </div>
+                                <field name="montant_direction" readonly="1" class="h5 font-weight-bold text-info o_field_widget"></field> 
+                                <strong class="text-info"> FCFA</strong>
+                            </div>
+                        </div>
+
+                        <!-- Bloc pour le montant accordé  -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-check-circle fa-2x text-success me-2"></i>
+                                    <h5 class="font-weight-bold text-success mb-0">Montants accordés</h5>
+                                </div>
+                                <field name="total_montant_accorde" readonly="1" class="h5 font-weight-bold text-success o_field_widget"></field> 
+                                <strong class="text-success"> FCFA</strong>
+                            </div>
+                        </div>
+
+                        <!-- Bloc pour le budget prévisionnel  -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-money fa-2x text-warning me-2"></i>
+                                    <h5 class="font-weight-bold text-warning mb-0">Budget prévisionnel</h5>
+                                </div>
+                                <field name="budget_previsionnel" readonly="1" class="h5 font-weight-bold text-warning o_field_widget"></field> 
+                                <strong class="text-warning"> FCFA</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div><br/><br/>
+
+                <group>
+                    <group >
+                        <field name="name"/>
+                    </group>
+                    <group >
+                        <field name="campaign_id" readonly="1" options="{'no_create': True, 'no_edit': True}" domain="[('state', '=', 'validation')]" />
+                        <field name="direction_filter"/>
+                        <field name="date_validation"/>
+                    </group>
+
+                </group>
+                <br/>
+                <field name="demandes_en_attente">
+                    <tree editable="false">
+                        <field name="matricule"/>
+                        <field name="nom"/>
+                        <field name="prenoms"/>
+                        <field name="direction"/>
+                        <field name="anciennete"/>
+                        <field name="amount_requested"/> 
+                        <field name="modalite_remboursement"/>
+                        <field name="create_date"/>
+
+                        <!-- Bouton pour valider -->
+                        <button name="action_validate" type="object" string="Valider" class="btn-success" icon="fa-check"/>
+                        <button name="action_reject" type="object" string="Rejeter" class="btn-danger" icon="fa-times" confirm="Êtes-vous sûr de vouloir rejeter cette demande ?" />
+                    </tree>
+                </field>
+
+                                <!-- Ajout du Chatter -->
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+        </form>
+        </field>
+    </record>
+
+    <!-- Vue liste -->
+    <record id="view_loan_campagn_tree" model="ir.ui.view">
+        <field name="name">comite.validation.tree</field>
+        <field name="model">comite.validation</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="montant_total"/>
+                <field name="total_montant_accorde"/>
+                <field name="date_validation"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_comite_validation" model="ir.actions.act_window">
+        <field name="name">Comité de validation</field>
+        <field name="res_model">comite.validation</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_loan_root" name="Prêt Scolaire"/>
+    <menuitem id="menu_comite_validation" name="Comité de Validations" parent="menu_loan_root" action="action_comite_validation"/>
+</odoo>

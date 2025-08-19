@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_loan_dashboard_form" model="ir.ui.view">
+            <field name="name">loan.dashboard.form</field>
+            <field name="model">loan.dashboard</field>
+            <field name="arch" type="xml">
+                <form string="Tableau de Bord">
+                    <div class="row align-items-center p-3 bg-white border-bottom">
+                        <div class="col">
+                            <field name="period" widget="radio" options="{'horizontal': true}" class="d-flex gap-3"/>
+                        </div>
+                    </div>
+                    <sheet>
+                        <div class="row mt16">
+                            <div class="col-lg-3 col-md-6 mb16">
+                                <div class="o_stat_box bg-white rounded p-3 shadow-sm h-100">
+                                    <div class="o_stat_text text-muted mb-2">Total des demandes</div>
+                                    <div class="o_stat_value display-6 fw-bold">
+                                        <field name="total_applications"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 mb16">
+                                <div class="o_stat_box bg-white rounded p-3 shadow-sm h-100">
+                                    <div class="o_stat_text text-muted mb-2">Demandes approuvées</div>
+                                    <div class="o_stat_value display-6 fw-bold text-success">
+                                        <field name="approved_applications"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 mb16">
+                                <div class="o_stat_box bg-white rounded p-3 shadow-sm h-100">
+                                    <div class="o_stat_text text-muted mb-2">Montant total demandé</div>
+                                    <div class="o_stat_value display-6 fw-bold">
+                                        <field name="total_requested_amount" widget="monetary"/>
+                                        <span class="fs-5"> F CFA</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 mb16">
+                                <div class="o_stat_box bg-white rounded p-3 shadow-sm h-100">
+                                    <div class="o_stat_text text-muted mb-2">Montant total approuvé</div>
+                                    <div class="o_stat_value display-6 fw-bold text-success">
+                                        <field name="total_approved_amount" widget="monetary"/>
+                                        <span class="fs-5"> F CFA</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt16">
+                            <div class="col-lg-3 col-md-6 mb16">
+                                <div class="o_stat_box bg-white rounded p-3 shadow-sm h-100">
+                                    <div class="o_stat_text text-muted mb-2">Demandes en attente</div>
+                                    <div class="o_stat_value display-6 fw-bold text-warning">
+                                        <field name="pending_applications"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 mb16">
+                                <div class="o_stat_box bg-white rounded p-3 shadow-sm h-100">
+                                    <div class="o_stat_text text-muted mb-2">Demandes rejetées</div>
+                                    <div class="o_stat_value display-6 fw-bold text-danger">
+                                        <field name="rejected_applications"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_loan_dashboard" model="ir.actions.act_window">
+            <field name="name">Tableau de Bord</field>
+            <field name="res_model">loan.dashboard</field>
+            <field name="view_mode">form</field>
+            <field name="target">main</field>
+        </record>
+
+        <menuitem id="menu_loan_dashboard"
+                  name="Tableau de Bord"
+                  action="action_loan_dashboard"
+                  parent="menu_loan_root"
+                  sequence="1"/>
+    </data>
+</odoo>

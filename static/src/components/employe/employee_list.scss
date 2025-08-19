@@ -1,0 +1,39 @@
+/* static/src/components/employee_list/employee_list.scss */
+
+.employee-card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .badge {
+        padding: 0.5em 1em;
+    }
+
+    i.fa {
+        width: 20px;
+        text-align: center;
+    }
+}
+
+.filter-section {
+    input,
+    select {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+
+        &:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+    }
+}

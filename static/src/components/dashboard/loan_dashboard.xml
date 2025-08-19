@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="loan_management.LoanDashboard" owl="1">
+        <div class="loan-dashboard p-4">
+            <!-- Filtres de période -->
+            <div class="row mb-4">
+                <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                        <select class="form-select me-3" t-on-change="onPeriodChange" t-model="state.selectedPeriod">
+                            <option value="all">Toutes les périodes</option>
+                            <option value="today">Aujourd'hui</option>
+                            <option value="week">Cette semaine</option>
+                            <option value="month">Ce mois</option>
+                            <option value="year">Cette année</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6" t-if="state.selectedPeriod === 'custom'">
+                    <div class="d-flex align-items-center">
+                        <DateRangePicker
+                            startDate="state.startDate"
+                            endDate="state.endDate"
+                            onDateRangeChange.bind="onDateRangeChange"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div t-if="state.loading" class="text-center py-4">
+                <i class="fa fa-spinner fa-spin fa-2x"/>
+                <p>Chargement des données...</p>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div t-else="" class="row">
+                <!-- Statistiques des demandes -->
+                <div class="col-12">
+                    <div class="row">
+                        <!-- Demandes approuvées -->
+                        <div class="col-lg-4 col-md-6 col-12 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-check-circle fa-2x text-success me-2"></i>
+                                    <h5 class="font-weight-bold text-success mb-0">Demandes approuvées</h5>
+                                </div>
+                                <div class="h5 font-weight-bold text-success mt-2" t-esc="state.approvedCount"/>
+                            </div>
+                        </div>
+
+                        <!-- Demandes rejetées -->
+                        <div class="col-lg-4 col-md-6 col-12 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-times-circle fa-2x text-danger me-2"></i>
+                                    <h5 class="font-weight-bold text-danger mb-0">Demandes rejetées</h5>
+                                </div>
+                                <div class="h5 font-weight-bold text-danger mt-2" t-esc="state.rejectedCount"/>
+                            </div>
+                        </div>
+
+                        <!-- Demandes en attente -->
+                        <div class="col-lg-4 col-md-6 col-12 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-clock fa-2x text-warning me-2"></i>
+                                    <h5 class="font-weight-bold text-warning mb-0">Demandes en attente</h5>
+                                </div>
+                                <div class="h5 font-weight-bold text-warning mt-2" t-esc="state.pendingCount"/>
+                            </div>
+                        </div>
+
+                        <!-- Montant total demandé -->
+                        <div class="col-lg-6 col-12 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-money-bill fa-2x text-info me-2"></i>
+                                    <h5 class="font-weight-bold text-info mb-0">Montant total demandé</h5>
+                                </div>
+                                <div class="h5 font-weight-bold text-info mt-2">
+                                    <span t-esc="formatAmount(state.totalRequestedAmount)"/>
+                                    <strong class="text-info"> FCFA</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Montant total accordé -->
+                        <div class="col-lg-6 col-12 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-check-double fa-2x text-primary me-2"></i>
+                                    <h5 class="font-weight-bold text-primary mb-0">Montant total accordé</h5>
+                                </div>
+                                <div class="h5 font-weight-bold text-primary mt-2">
+                                    <span t-esc="formatAmount(state.totalApprovedAmount)"/>
+                                    <strong class="text-primary"> FCFA</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

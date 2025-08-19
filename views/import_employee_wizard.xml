@@ -1,0 +1,24 @@
+<odoo>
+    <record id="view_employee_import_wizard_form" model="ir.ui.view">
+        <field name="name">employee.import.wizard.form</field>
+        <field name="model">employee.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Importer des Employés" create="false" edit="false">
+                <group>
+                    <field name="file" widget="binary" string="Fichier Excel"/>
+                </group>
+                <footer>
+                    <button string="Importer" type="object" name="import_employees" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_employee_import_wizard" model="ir.actions.act_window">
+        <field name="name">Importer des Employés</field>
+        <field name="res_model">employee.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

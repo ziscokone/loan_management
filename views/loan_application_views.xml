@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_loan_application_form" model="ir.ui.view">
+        <field name="name">loan.application.form</field>
+        <field name="model">loan.application</field>
+        <field name="arch" type="xml">
+            <form class="o_form_view o_form_sheet">
+                <header class="bg-white border-bottom">
+                    <button name="action_validate" string="Valider" type="object" invisible="campaign_state != &apos;validation&apos; or state ==&apos;validated&apos; or state ==&apos;rejected&apos;" class="btn btn-success px-4 me-2" icon="fa-check"/>
+                    <button name="action_reject" string="Rejeter" confirm="Êtes-vous sûr de vouloir rejeter cette demande ?" type="object" class="btn btn-danger px-4" invisible="campaign_state != &apos;validation&apos; or state ==&apos;rejected&apos; or state == &apos;validated&apos;" icon="fa-times"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,pending,validated,rejected" invisible="1"/>
+                </header>
+                <!-- État de remboursement -->
+                <field name="remboursement_status" invisible="1"/>
+                <div class="p-0">
+                    <div class="position-relative rounded-3 bg-white shadow-sm mx-4 my-3">
+                        <!-- Messages d'alerte stylisés -->
+                        <!-- <div class="p-3">
+                            <div class="alert alert-info rounded-3 text-center border-0 shadow-sm mb-0" role="alert" invisible="state != 'draft'">
+                                <i class="fa fa-info-circle fa-lg me-2"/> Complétez tous les champs requis avant de soumettre votre demande.
+                            </div>
+                            <div class="alert alert-success rounded-3 text-center border-0 shadow-sm mb-0" role="alert" invisible="state != 'validated'">
+                                <i class="fa fa-check-circle fa-lg me-2"/> Cette demande a été validée avec succès !
+                            </div>
+                            <div class="alert alert-danger rounded-3 text-center border-0 shadow-sm mb-0" role="alert" invisible="state != 'rejected'">
+                                <i class="fa fa-times-circle fa-lg me-2"/> Cette demande a été rejetée.
+                            </div>
+                        </div> -->
+                        <!-- AFFICHER LES RUBAN SUR LES DEMANDES  -->
+                        <widget name="web_ribbon" title="Rejetée" bg_color="bg-danger" invisible="state != &apos;rejected&apos;"/>
+                        <widget name="web_ribbon" title="En attente" bg_color="bg-info" invisible="state != &apos;pending&apos;"/>
+                        <widget name="web_ribbon" title="Validée" bg_color="bg-success" invisible="state != &apos;validated&apos;"/>
+                        <div>
+                            <group>
+                                <field name="reference" readonly="1" class="h2 text-primary"/>
+                            </group>
+                        </div>
+                        <!-- Contenu principal -->
+                        <div class="p-4">
+                            <div class="row g-4">
+                                <!-- Informations de la demande -->
+                                <div class="col-12">
+                                    <div class="p-2 rounded-3 border bg-light">
+                                        <h4 class="mb-4 d-flex align-items-center text-primary">
+                                            <i class="fa fa-file-text-o me-2"/>
+                                            <span>Informations de la Demande</span>
+                                        </h4>
+                                        <group>
+                                            <group>
+                                                <field name="campaign_id" options="{&apos;no_create&apos;: True, &apos;no_edit&apos;: True}" domain="[&apos;|&apos;, (&apos;state&apos;, &apos;=&apos;, &apos;open&apos;), (&apos;state&apos;, &apos;=&apos;, &apos;validation&apos;)]" readonly="campaign_state == &apos;suivie&apos;"/>
+                                                <field name="create_date"/>
+                                                <field name="campaign_state" invisible="1"/>
+                                                <field name="amount_requested" class="text-success" readonly="campaign_state == &apos;suivie&apos;"/>
+                                                <field name="approved_amount" widget="formatted_integer" readonly="campaign_state == &apos;suivie&apos;" class="text-primary"/>
+                                            </group>
+                                            <group>
+                                                <field name="modalite_remboursement" readonly="campaign_state == &apos;suivie&apos;"/>
+                                                <field name="mensualite" readonly="1"/>
+                                                <field name="montant_restant" readonly="1" class="fw-bold"/>
+                                            </group>
+                                        </group>
+                                    </div>
+                                </div>
+                                <!-- Informations du demandeur -->
+                                <div class="col-12">
+                                    <div class="p-2 rounded-3 border bg-light">
+                                        <h4 class="mb-4 d-flex align-items-center text-primary">
+                                            <i class="fa fa-user me-2"/>
+                                            <span>Informations du Demandeur</span>
+                                        </h4>
+                                        <group>
+                                            <group>
+                                                <field name="employee_id"/>
+                                                <field name="matricule" invisible="1"/>
+                                                <field name="nom" readonly="1"/>
+                                                <field name="prenoms" readonly="1"/>
+                                                <field name="age" readonly="1"/>
+                                                <field name="sexe" readonly="1"/>
+                                            </group>
+                                            <group>
+                                                <field name="email" widget="email" readonly="campaign_state == &apos;suivie&apos;"/>
+                                                <field name="telephone" widget="phone" readonly="campaign_state == &apos;suivie&apos;"/>
+                                                <field name="direction" readonly="1"/>
+                                                <field name="typecategorie" readonly="1"/>
+                                                <field name="anciennete" readonly="1"/>
+                                            </group>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Historique des paiements -->
+                            <div class="mt-4">
+                                <notebook class="shadow-sm">
+                                    <page string="Historique des paiements" name="payments">
+                                        <div class="bg-light p-2">
+                                            <h4 class="mb-2 d-flex align-items-center text-primary">
+                                                <i class="fa fa-history me-2"/>
+                                                <span>Détails des versements</span>
+                                            </h4>
+                                            <div class="border bg-white rounded-3 shadow-sm">
+                                                <div class="table-responsive">
+                                                    <field name="ligne_versement_ids" readonly="1" class="mt-2">
+                                                        <tree class="table-sm" decoration-success="montant_paye &gt; 0" decoration-danger="montant_paye == 0">
+                                                            <field name="loan_application_id" string="Référence Prêt"/>
+                                                            <field name="montant_paye" string="Montant Versé"/>
+                                                            <field name="create_uid" string="Agent"/>
+                                                            <field name="create_date" string="Date d'import"/>
+                                                        </tree>
+                                                    </field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </page>
+                                    <page string="Historique des prêts de l&apos;employé" name="employee_loan_history">
+                                        <div class="bg-light p-2">
+                                            <h4 class="mb-2 d-flex align-items-center text-primary">
+                                                <i class="fa fa-money-bill-alt me-2"/>
+                                                <span>Détails des prêts antérieurs</span>
+                                            </h4>
+                                            <div class="border bg-white rounded-3 shadow-sm">
+                                                <div class="table-responsive">
+                                                    <!-- Utilisation d'un domaine pour exclure la demande actuelle -->
+                                                    <field name="employee_id" invisible="1"/>
+                                                    <field name="employee_loan_history_ids" readonly="1" class="mt-2">
+                                                        <tree class="table-sm" editable="bottom" create="0" delete="0" edit="0">
+                                                            <field name="approved_amount" string="Montant accordé"/>
+                                                            <field name="modalite_remboursement" string="Modalité"/>
+                                                        </tree>
+                                                    </field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </page>
+                                </notebook>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Chatter -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread" options="{&apos;display_log_button&apos;: True}"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <!-- Vue Liste -->
+    <record id="view_loan_application_tree" model="ir.ui.view">
+        <field name="name">loan.application.tree</field>
+        <field name="model">loan.application</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="reference"/>
+                <field name="create_date"/>
+                <field name="matricule" class="fw-bold"/>
+                <field name="campaign_id"/>
+                <field name="nom"/>
+                <field name="prenoms"/>
+                <field name="amount_requested"/>
+                <field name="approved_amount"/>
+                <field name="modalite_remboursement"/>
+                <field name="state" widget="badge" decoration-info="state == &apos;pending&apos;" decoration-success="state == &apos;validated&apos;" decoration-danger="state == &apos;rejected&apos;"/>
+            </tree>
+        </field>
+    </record>
+    <!-- Vue Recherche -->
+    <record id="view_loan_application_search" model="ir.ui.view">
+        <field name="name">loan.application.search</field>
+        <field name="model">loan.application</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="reference"/>
+                <field name="matricule"/>
+                <field name="nom"/>
+                <field name="prenoms"/>
+                <field name="direction"/>
+                <field name="campaign_id"/>
+                <field name="typecategorie"/>
+                <separator/>
+                <filter string="Mes demandes" name="my_applications" domain="[(&apos;create_uid&apos;, &apos;=&apos;, uid)]"/>
+                <separator/>
+                <filter string="Brouillon" name="draft" domain="[(&apos;state&apos;, &apos;=&apos;, &apos;draft&apos;)]"/>
+                <filter string="En Attente" name="pending" domain="[(&apos;state&apos;, &apos;=&apos;, &apos;pending&apos;)]"/>
+                <filter string="Validé" name="validated" domain="[(&apos;state&apos;, &apos;=&apos;, &apos;validated&apos;)]"/>
+                <filter string="Rejeté" name="rejected" domain="[(&apos;state&apos;, &apos;=&apos;, &apos;rejected&apos;)]"/>
+                <group expand="0" string="Regrouper Par">
+                    <filter name="group_by_state" string="État" context="{&apos;group_by&apos;: &apos;state&apos;}"/>
+                    <filter name="group_by_campaign" string="Campagne" context="{&apos;group_by&apos;: &apos;campaign_id&apos;}"/>
+                    <filter name="group_by_direction" string="Direction" context="{&apos;group_by&apos;: &apos;direction&apos;}"/>
+                    <filter name="group_by_month" string="Mois" context="{&apos;group_by&apos;: &apos;create_date:month&apos;}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <!-- Action Window -->
+    <record id="action_loan_application" model="ir.actions.act_window">
+        <field name="name">Demandes de Prêt Scolaire</field>
+        <field name="res_model">loan.application</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_loan_application_search"/>
+        <field name="context">{&apos;search_default_pending&apos;: 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune demande de prêt trouvée
+            </p>
+            <p>
+                Commencez par créer une nouvelle demande de prêt scolaire.
+                <br/>
+                <i class="fa fa-arrow-right"/> Cliquez sur &apos;Créer&apos; pour démarrer.
+            </p>
+        </field>
+    </record>
+    <!-- Menu Items -->
+    <menuitem id="menu_loan_application" name="Demandes de Prêt" parent="menu_loan_root" sequence="3" action="action_loan_application"/>
+</odoo>

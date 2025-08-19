@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="versement_notification_email_template" model="mail.template">
+            <field name="name">Notification de Versement</field>
+            <field name="model_id" ref="model_ligne_versement"/>
+            <field name="subject">Notification de versement - Prêt scolaire </field>
+            <field name="email_from">${(object.company_id.email or user.company_id.email)|safe}</field>
+            <!-- <field name="email_from">${(object.company_id.email or user.company_id.email)|safe}</field> -->
+            <field name="email_to">${object.email|safe}</field>
+            <field name="body_html" type="html">
+                <div style="background-color: #f8f9fa; padding: 10px; font-family: 'Helvetica Neue', Arial, sans-serif;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <!-- En-tête -->
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <h2 style="color: #2c3e50; margin: 0; padding: 0; font-size: 20px; font-weight: 600;">
+                                Notification de Versement - Prêt Scolaire
+                            </h2>
+                            <h3 style="color: #3498db; margin: 10px 0 0 0; font-size: 18px;">
+                                <!-- ${object.reversement_id.mois} -->
+                                <span t-out="object.reversement_id.mois or ''"></span>
+                            </h3>
+                        </div>
+
+                        <!-- Message principal -->
+                        <p style="color: #34495e; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+                            <!-- Cher(e) ${object.loan_application_id.nom} ${object.loan_application_id.prenoms}, -->
+                            Cher(e) <span t-out="object.loan_application_id.nom or ''"></span> <span t-out="object.loan_application_id.prenoms or ''"></span>,
+
+                        </p>
+
+                        <p style="color: #34495e; font-size: 14px; line-height: 1.5;">
+                            Nous vous informons qu'un versement a été effectué pour votre prêt scolaire.
+                        </p>
+
+                        <!-- Détails du versement -->
+                        <div style="background-color: #f8f9fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                            <div style="margin-bottom: 15px;">
+                                <span style="color: #7f8c8d; font-size: 14px;">Montant versé</span><br/>
+                                <span style="color: #2c3e50; font-size: 16px; font-weight: 600;">
+                                    <!-- ${'{:,.0f}'.format(object.montant_paye).replace(',', ' ')} FCFA -->
+                                    <span t-esc ="'{:,.0f}'.format(object.montant_paye or 0).replace(',', ' ')"></span> FCFA
+                                </span>
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <span style="color: #7f8c8d; font-size: 14px;">Montant restant à payer</span><br/>
+                                <span style="color: #2c3e50; font-size: 16px; font-weight: 600;">
+                                    <!-- ${'{:,.0f}'.format(object.loan_application_id.).replace(',', ' ')} FCFA -->
+                                    <span t-esc ="'{:,.0f}'.format(object.loan_application_id.montant_restant or 0).replace(',', ' ')"></span> FCFA
+                                    
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Contact -->
+                        <div style="background-color: #fff8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                            <p style="color: #e67e22; margin: 0 0 10px 0; font-size: 14px;">
+                                Pour toute question, n'hésitez pas à contacter le service des prêts scolaires.
+                            </p>
+                        </div>
+
+                        <!-- Signature -->
+                        <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ecf0f1;">
+                            <p style="color: #7f8c8d; margin: 0; font-size: 14px;">Cordialement,</p>
+                            <p style="color: #2c3e50; font-weight: 600; font-size: 14px; margin: 5px 0 0 0;">Service Prêt Scolaire</p>
+                        </div>
+                    </div>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>

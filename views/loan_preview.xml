@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="loan_preview" name="Loan Application Preview">
+        <t t-call="website.layout">
+                <div class="position-absolute w-100 h-100" 
+                     style="top: 0; 
+                            left: 0; 
+                            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                                      url('/loan_management/static/src/img/paa_2.jpg') center/cover no-repeat;
+                            filter: blur(2px);
+                            z-index: -1;">
+                </div>
+                
+            <div class="container py-5">
+                <div class="card rounded-lg shadow-lg">
+                    <div class="card-header position-relative py-3" style="background-color:#0099CC">
+                        <h4 class="text-white text-center mb-0 h4">Prévisualisation de votre demande de prêt</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-4">
+                            <!-- Colonne informations personnelles -->
+                            <div class="col-md-6">
+                                <div class="p-4 bg-light rounded-lg h-100">
+                                    <h4 class="mb-4 pb-2 border-bottom fw-bold" style="color: #003366;">Informations personnelles</h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless">
+                                            <tr class="hover-bg-light">
+                                                <th class="text-muted">Matricule</th>
+                                                <td class="fw-medium"><t t-esc="matricule"/></td>
+                                            </tr>
+                                            <tr class="hover-bg-light">
+                                                <th class="text-muted">Nom</th>
+                                                <td class="fw-medium"><t t-esc="nom"/></td>
+                                            </tr>
+                                            <tr class="hover-bg-light">
+                                                <th class="text-muted">Prénoms</th>
+                                                <td class="fw-medium"><t t-esc="prenoms"/></td>
+                                            </tr>
+                                            <tr class="hover-bg-light">
+                                                <th class="text-muted">Direction</th>
+                                                <td class="fw-medium"><t t-esc="direction"/></td>
+                                            </tr>
+                                            <tr class="hover-bg-light">
+                                                <th class="text-muted">Catégorie</th>
+                                                <td class="fw-medium"><t t-esc="typecategorie"/></td>
+                                            </tr>
+                                            <tr class="hover-bg-light">
+                                                <th class="text-muted">Ancienneté</th>
+                                                <td class="fw-medium"><t t-esc="anciennete"/> ans</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Colonne détails de la demande -->
+                            <div class="col-md-6">
+                                <div class="p-4 bg-light rounded-lg h-100">
+                                    <h4 class="mb-4 pb-2 border-bottom fw-bold" style="color: #003366;">Détails de la demande</h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless">
+                                            <tr class="hover-bg-light">
+                                                <th class="text-muted">Montant demandé</th>
+                                                <td class="fw-bold text-primary">
+                                                    <span t-esc="'{:,.0f}'.format(float(amount_requested)).replace(',', ' ')"/> FCFA
+                                                </td>
+                                            </tr>
+                                            <tr class="hover-bg-light">
+                                                <th class="text-muted">Modalité de remboursement</th>
+                                                <td class="fw-medium"><t t-esc="modalite_remboursement"/> mois</td>
+                                            </tr>
+                                            <tr class="hover-bg-light">
+                                                <th class="text-muted">Téléphone</th>
+                                                <td class="fw-medium"><t t-esc="telephone"/></td>
+                                            </tr>
+                                            <tr class="hover-bg-light">
+                                                <th class="text-muted">Email</th>
+                                                <td class="fw-medium"><t t-esc="email"/></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Boutons d'action -->
+                        <div class="row mt-5">
+                            <div class="col-12 text-center">
+                                <form action="/demande-pret" method="post" class="d-inline-block mx-2">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="matricule" t-att-value="matricule"/>
+                                    <input type="hidden" name="amount_requested" t-att-value="amount_requested"/>
+                                    <input type="hidden" name="modalite_remboursement" t-att-value="modalite_remboursement"/>
+                                    <input type="hidden" name="telephone" t-att-value="telephone"/>
+                                    <input type="hidden" name="email" t-att-value="email"/>
+                                    <input type="hidden" name="campaign_id" t-att-value="campaign_id"/>
+                                    <button type="submit" class="btn btn-outline-secondary btn-lg px-4 fw-medium">
+                                        Modifier la demande
+                                    </button>
+                                </form>
+
+                                <form action="/demande-pret/submit" method="post" class="d-inline-block mx-2">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="matricule" t-att-value="matricule"/>
+                                    <input type="hidden" name="amount_requested" t-att-value="amount_requested"/>
+                                    <input type="hidden" name="modalite_remboursement" t-att-value="modalite_remboursement"/>
+                                    <input type="hidden" name="telephone" t-att-value="telephone"/>
+                                    <input type="hidden" name="email" t-att-value="email"/>
+                                    <input type="hidden" name="campaign_id" t-att-value="campaign_id"/>
+                                    <button type="submit" class="btn btn-success btn-lg px-4 fw-medium">
+                                        Confirmer et envoyer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

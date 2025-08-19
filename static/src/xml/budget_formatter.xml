@@ -1,0 +1,5 @@
+<t t-name="BudgetFormatterTemplate" owl="1">
+    <input type="text" t-ref="input" class="o_input" placeholder="Saisir un montant..."
+           t-att-value="state.rawValue and Number(state.rawValue).toLocaleString('fr-FR') or ''"/>
+    <!-- <input type="hidden" t-ref="hiddenInput" t-att-name="props.name" t-att-value="state.rawValue"/> -->
+</t>

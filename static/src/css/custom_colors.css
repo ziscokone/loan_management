@@ -1,0 +1,109 @@
+
+
+ /* Personnalisation du menu horizontal */
+.o_main_navbar {
+    background-color:#003366 !important;
+    color: white !important;
+    font-weight: bold;
+    /* border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; */
+    
+    /* .dropdown-toggle, .o_menu_brand, .o_menu_sections {
+        color: white !important;
+    } */
+
+}
+
+
+/* Personnaliser les liens de la navbar */
+#o_main_navbar .navbar-nav {
+    background-color:#003366 !important;
+    color: white !important;
+}
+
+
+.dropdown-item {
+    background-color:#003366 !important;
+    color: white !important;
+}
+
+/* AU SURVOL DU MENU :horizontal */
+.dropdown-item:hover {
+    background-color:#0099CC !important;
+}
+
+/* MENU DROPDOWN CONFIGURATION  */
+.dropdown button{
+    background-color:#003366 !important;
+    color: white !important;
+}
+
+.dropdown button:hover{
+    background-color:#0099CC !important;
+}
+
+
+/* // Personnalisation du menu latéral */
+.o_menu_apps {
+    background-color:#003366 ;
+}
+
+
+/* // Boutons d'action principaux */
+.btn-primary {
+    background-color: #0099CC;
+    border-color: #003366 !important;
+    color: white !important; /* Couleur du texte par défaut */
+}
+
+
+.btn-secondary {
+    background-color: #CC3333;
+    border-color: #003366 !important;
+    color: white !important; /* Couleur du texte par défaut */
+}
+
+.btn-secondary:hover {
+    background-color: #0099CC;
+    border-color: #003366 !important;
+    color: white !important; /* Couleur du texte par défaut */
+}
+
+.btn-primary:hover {
+    background-color: #003366 !important; /* Couleur au survol */
+    border-color: #003366 !important;
+    color: white !important; /* Couleur du texte par défaut */
+}
+
+
+.text-primary{
+    color: #003366 !important; /* Couleur du texte par défaut */
+}
+
+.o_form_button_create{
+    background-color: #0099CC;
+    color: white !important; /* Couleur du texte par défaut */ 
+}
+
+.o_form_button_create:hover{
+    background-color: #003366 !important; /* Couleur au survol */
+    border-color: #003366 !important;
+    color: white !important; /* Couleur du texte par défaut */
+}
+
+
+/* COULEUR DU RUBAN  */
+.custom-ribbon{
+    background-color: #003366 !important; /* Couleur au survol */
+    color: white !important; /* Couleur du texte par défaut */
+}
+
+
+.o_notebook_headers ul li{
+    background-color: #0099CC !important;
+}
+
+.o_notebook_headers ul li a{
+    color: #003366 !important;
+    font-weight: bold; 
+}
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="web.MoneySeparatorWidget" owl="1">
+        <input 
+            t-ref="input"
+            t-att-id="props.id || ''"
+            t-att-name="props.name || ''"
+            t-att-placeholder="props.placeholder || ''"
+            t-att-type="props.type || 'text'"
+            t-att-required="props.required || false"
+            t-att-readonly="props.readonly || false"
+            t-on-input="(ev) => this.onInput(ev)"
+            t-att-class="props.class || ''"
+        />
+    </t>
+</templates>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Action pour le dashboard -->
+    <record id="action_loan_dashboard" model="ir.actions.client">
+        <field name="name">Tableau de bord des prêts</field>
+        <field name="tag">loan_dashboard_action</field>
+    </record>
+
+    <!-- Menu item pour le dashboard -->
+    <menuitem id="menu_loan_dashboard_view"
+              name="Tableau de Bord des Prêts"
+              parent="loan_management.menu_loan_root"
+              action="action_loan_dashboard"
+              sequence="1"/>
+</odoo>

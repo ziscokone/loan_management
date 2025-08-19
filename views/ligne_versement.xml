@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vue Liste -->
+    <record id="view_ligne_versement_tree" model="ir.ui.view">
+        <field name="name">ligne.versement.tree</field>
+        <field name="model">ligne.versement</field>
+        <field name="arch" type="xml">
+            <tree string="Lignes de versement">
+                <field name="employee_id"/>
+                <field name="nom"/>
+                <field name="prenoms"/>
+                <field name="email"/>
+                <field name="montant_paye"/>
+                <field name="loan_application_id"/>
+                <field name="create_uid" string="Créé par"/>
+                <field name="create_date" string="Date de création"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue Recherche -->
+    <record id="view_ligne_versement_search" model="ir.ui.view">
+        <field name="name">ligne.versement.search</field>
+        <field name="model">ligne.versement</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="employee_id"/>
+                <field name="reversement_id"/>
+                <field name="loan_application_id"/>
+                <separator/>
+                <!-- <filter string="Mes lignes" name="my_lines"domain="[('create_uid', '=', uid)]"/> -->
+                <group expand="0" string="Regrouper Par">
+                    <filter name="group_by_campaign" string="Campagne" context="{'group_by': 'campagne'}"/>
+                    <filter name="group_by_employee" string="Employé" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_by_reversement" string="Versement" context="{'group_by': 'reversement_id'}"/>
+                    <filter name="group_by_loan" string="Demande de prêt" context="{'group_by': 'loan_application_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action Window -->
+    <record id="action_ligne_versement" model="ir.actions.act_window">
+        <field name="name">Historiques Prélèvement</field>
+        <field name="res_model">ligne.versement</field>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="view_ligne_versement_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune ligne de Prélèvement trouvée
+            </p>
+            <p>
+                Créez votre première ligne de versement.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_ligne_versement"
+              name="Historiques"
+              parent="loan_management.menu_loan_root"
+              action="action_ligne_versement"/>
+</odoo>
