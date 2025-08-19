@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_loan_mutual_form" model="ir.ui.view">
+        <field name="name">loan.mutual.form</field>
+        <field name="model">loan.mutual</field>
+        <field name="arch" type="xml">
+            <form class="o_form_view o_form_sheet"><!-- LES BOUTONS D'ACTION  -->
+                <header class="bg-white border-bottom"><!-- Boutons d'action -->
+                    <button name="action_submit" string="Envoyer ➡️ Commission prêt" type="object" class="oe_highlight" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.secretariat_pret_mutuel,loan_mutual.manager_pret_mutuel" confirm="Êtes-vous sûr de vouloir soumettre cette demande au Commission de prêt ?" invisible="state != &apos;pending&apos; or state == &apos;check_withdrawn&apos; or state == &apos;in_treatment&apos;"/>
+                    <button name="action_check_withdrawn" string="Retrait de Chèque" type="object" class="btn-success" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.secretariat_pret_mutuel,loan_mutual.manager_pret_mutuel" invisible="state ==&apos;pending&apos; or state ==&apos;in_treatment&apos; or state ==&apos;check_withdrawn&apos; or state ==&apos;check_cancel&apos; or state == 'se_validation' or state == 'pca_validation' or state == 'rejected'" confirm="Êtes-vous sûr de confirmer le retrait de ce chèque ?"/>
+                    <button name="action_cancel_withdrawn" string="Annuler le Chèque" type="object" class="btn-danger" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.secretariat_pret_mutuel,loan_mutual.manager_pret_mutuel" invisible="state ==&apos;pending&apos; or state ==&apos;in_treatment&apos; or state ==&apos;check_cancel&apos;  or state ==&apos;check_withdrawn&apos; or state == 'se_validation' or state == 'pca_validation'  or state == 'rejected'" confirm="Êtes-vous sûr de confirmer l'annulation de ce chèque ?"/>
+                    <button name="action_set_in_treatment" string="Envoyer ➡️ SE" type="object" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.commission__pret_sociaux_pret_mutuel,loan_mutual.manager_pret_mutuel" confirm="Êtes-vous sûr de vouloir soumettre cette demande à la Secrétaire Exécutive pour validation ?" invisible="state == &apos;check_delivery&apos; or  state ==&apos;check_withdrawn&apos; or state == &apos;se_validation&apos; or state == 'se_validation'" class="btn-info"/>
+                    <button name="action_set_pca_validation" string="Envoyer ➡️ PCA" type="object" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.secretaire_executive_pret_mutuel,loan_mutual.manager_pret_mutuel" confirm="Êtes-vous sûr de vouloir soumettre cette demande au PCA pour validation ?" invisible="state == &apos;check_delivery&apos; or  state ==&apos;check_withdrawn&apos; or state == &apos;pca_validation&apos; or state == 'rejected'" class="btn-warning"/>
+                    <button name="action_sending_to_accounting" string="Envoyer ➡️ Comptabilité" type="object" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.secretaire_executive_pret_mutuel,loan_mutual.manager_pret_mutuel" confirm="Êtes-vous sûr de vouloir soumettre cette demande à la Comptabilité ?" invisible="state == &apos;check_delivery&apos; or  state ==&apos;check_withdrawn&apos; or state == &apos;pca_validation&apos; or state == 'rejected'" class="btn-info"/>
+                    <button name="action_approve" string="Envoyer ➡️ Comptabilité" type="object" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.pca_pret_mutuel,loan_mutual.manager_pret_mutuel" confirm="Êtes-vous sûr de vouloir approuver cette demande ?" invisible="state == &apos;check_delivery&apos; or  state ==&apos;check_withdrawn&apos; or state == &apos;approved&apos;" class="btn-success"/>
+                    <button name="action_check_delivery" string="Emettre le Chèque" type="object" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.comptabilite_pret_mutuel,loan_mutual.manager_pret_mutuel" confirm="Êtes-vous sûr de vouloir emettre le chèque pour cette demande ?" invisible="state == &apos;check_delivery&apos;  or  state ==&apos;check_withdrawn&apos;" class="btn-info"/>
+                    <button name="action_reject" string="Rejeter" type="object" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.pca_pret_mutuel,loan_mutual.manager_pret_mutuel,loan_mutual.secretaire_executive_pret_mutuel,loan_mutual.commission__pret_sociaux_pret_mutuel,loan_mutual.secretariat_pret_mutuel" confirm="Êtes-vous sûr de vouloir supprimer cette demande ?" invisible="state == &apos;check_delivery&apos;  or  state ==&apos;check_withdrawn&apos; or state == 'rejected'" class="btn-danger"/>4
+                    <field name="state" widget="statusbar" statusbar_visible="pending,in_treatment,se_validation,pca_validation,approved,check_delivery,rejected" invisible="1"/>
+                </header>
+                <br/>
+                <div class="alert alert-danger d-flex align-items-center" role="alert" invisible="demande_exceptionnelle != True">
+                    <i class="fa fa-exclamation-triangle me-2" role="img" aria-label="Attention" title="Attention"/>
+                    <div>
+                        <strong>Attention :</strong> Demande Exceptionnelle.
+                    </div>
+                </div>
+<!-- 
+                <div class="alert alert-success d-flex align-items-center" role="alert" invisible="agent_agree != True and state == 'se_validation'">
+                    <i class="fa fa-check-circle me-2" role="img" aria-label="" title=""/>L'agent a donné son accord pour le montant qui lui a été attribué.
+                </div>
+                
+                <div class="alert alert-danger d-flex align-items-center" role="alert" invisible="agent_agree != False and state == 'se_validation'">
+                    <i class="fa fa-check-circle me-2" role="img" aria-label="" title=""/>L'agent n'a pas donné son accord pour le montant qui lui a été attribué.
+                </div> -->
+
+                <!-- RUBAN  --> 
+                <widget name="web_ribbon" title="Rejetée" bg_color="bg-danger" invisible="state != &apos;rejected&apos;"/>
+                <widget name="web_ribbon" title="En traitement " bg_color="bg-warning" invisible="state != &apos;in_treatment&apos;"/>
+                <widget name="web_ribbon" title="En attente" bg_color="bg-primary" invisible="state != &apos;pending&apos;"/>
+                <widget name="web_ribbon" title="Validation SE" bg_color="bg-info" invisible="state != &apos;se_validation&apos;"/>
+                <widget name="web_ribbon" title="Chèque disponible" bg_color="bg-warning" invisible="state != &apos;check_delivery&apos;"/>
+                <widget name="web_ribbon" title="Chèque retiré" bg_color="bg-success" invisible="state != &apos;check_withdrawn&apos;"/>
+                <widget name="web_ribbon" title="Chèque Annulé" bg_color="bg-danger" invisible="state != &apos;check_cancel&apos;"/>
+                <widget name="web_ribbon" title="Validation PCA" bg_color="bg-success" invisible="state != &apos;pca_validation&apos;"/>
+                <widget name="web_ribbon" title="Validée" bg_color="bg-success" invisible="state != &apos;approved&apos;"/>
+                <!-- <widget name="web_ribbon" title="Soldé" bg_color="bg-success" invisible="is_on_sale == False"/> -->
+                <div class="container-fluid">
+                    <div class="row"><!-- Bloc pour le montant total des demandes -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded-lg shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-money fa-2x text-primary me-2"></i>
+                                    <h5 class="font-weight-bold text-primary mb-0">Budget Restant</h5>
+                                </div>
+                                <field name="budget_restant" readonly="1" class="h5 font-weight-bold text-primary o_field_widget"></field>
+                                <strong class="text-primary"> FCFA</strong>
+                            </div>
+                        </div><!-- Bloc pour le budget prévisionnel  -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded-lg shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-money fa-2x text-warning me-2"></i>
+                                    <h5 class="font-weight-bold text-warning mb-0">Budget Prévisionnel</h5>
+                                </div>
+                                <field name="budget_previsionnel" readonly="1" class="h5 font-weight-bold text-warning o_field_widget"></field>
+                                <strong class="text-warning"> FCFA</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-0">
+                    <div class="position-relative rounded-3 bg-white shadow-sm mx-4 my-3"><!-- En-tête avec référence -->
+                        <div class="px-4 py-3 bg-light border-bottom">
+                            <group>
+                                <field name="reference" readonly="1" class="h2 text-primary"/>
+                            </group>
+                        </div><!-- CHAMPS CACHES  -->
+                        <field name="can_edit_mapaa" invisible="1"/><!-- Champ invisible pour contrôler l'accès en édition -->
+                        <field name="can_edit_pca" invisible="1"/>
+                        <field name="can_edit_se" invisible="1"/>
+                        <field name="can_edit_compta" invisible="1"/>
+                        <field name="can_edit_secretaire" invisible="1"/>
+                        <field name="motif_rejet_readonly" invisible="1"/>
+
+                        <field name="is_on_sale" invisible="1"/><!-- Contenu principal -->
+                        <div class="p-4">
+                            <div class="row g-4"><!-- Informations fusionnées -->
+                                <div class="col-12">
+                                    <div class="p-2 rounded-3 border bg-light">
+                                        <h4 class="mb-4 d-flex align-items-center text-primary">
+                                            <i class="fa fa-info-circle me-2"/>
+                                            <span>Informations</span>
+                                        </h4>
+                                        <group>
+                                            <group>
+                                                <field name="campaign_id" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')" options="{&apos;no_create&apos;: True, &apos;no_edit&apos;: True}" domain="[(&apos;state&apos;, &apos;in&apos;, [&apos;open&apos;, &apos;draft&apos;])]"/>
+                                                <field name="employee_id" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="matricule" invisible="1"/>
+                                                <field name="nom" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="prenoms" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="age" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="sexe" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="email" widget="email" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="telephone" widget="phone" string="Téléphone  ★" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="telephone_2" widget="phone" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="direction" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="typecategorie" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="anciennete" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="piece_identite" string="Pièce d'identité  ★" widget="image" options="{&apos;preview_image&apos;: &apos;piece_identite&apos;, &apos;size&apos;: [300, 300], &apos;zoom&apos;: true, &apos;zoom_factor&apos;: 3}}" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="agent_agree" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                            </group>
+                                            <group><!-- Infos demande -->
+                                                <field name="create_date" readonly="1"/>
+                                                <field name="type_pret" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="amount_requested" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="amount_requested_words" class="text-success" readonly="1"/>
+                                                <field name="file_fees" class="text-warning" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="amount_to_be_refunded" invisible="1" class="text-success" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="modalite_remboursement" string="Modalité de Remboursement  ★" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="mensualite" readonly="1"/>
+                                                <field name="montant_restant" readonly="1" string="Valeur Réelle du Prêt"/>
+                                                <field name="demande_exceptionnelle" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="motif_demande" string="Motif de la Demande  ★" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="cotite" widget="pdf_viewer" string="Quotité (PDF)  ★" class="mt-3" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="submitted_by" invisible="state == &apos;pending&apos;" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="submission_date" invisible="state == &apos;pending&apos;" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                            </group>
+                                        </group>
+                                    </div>
+                                </div><!-- ESPACE RESERVE A MA-PAA -->
+                                <div class="col-12" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.commission__pret_sociaux_pret_mutuel,loan_mutual.manager_pret_mutuel,loan_mutual.pca_pret_mutuel,loan_mutual.secretaire_executive_pret_mutuel,loan_mutual.comptabilite_pret_mutuel">
+                                    <div class="p-2 rounded-3 border bg-light">
+                                        <h4 class="mb-4 d-flex align-items-center text-primary">
+                                            <i class="fa fa-lock me-2"/>
+                                            <span>ESPACE RESERVE A MA-PAA</span>
+                                        </h4>
+                                        <group>
+                                            <group>
+                                                <field name="approved_amount" readonly="not can_edit_mapaa or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="amount_to_be_refunded" invisible="1" readonly="not can_edit_mapaa or state == &apos;in_treatment&apos; or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="amount_to_be_refunded_ps" readonly="not can_edit_mapaa or state == &apos;in_treatment&apos; or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="budget_restant_ps" readonly="1"  invisible="1"/>
+
+                                            </group>
+                                            <group>
+                                                <field name="rejection_reason" invisible="state == &apos;pending&apos;" readonly="1" class="text-danger"/>
+                                                <field name="transferable_portion" readonly="not can_edit_mapaa or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')" string="Quotité Cessible  ★"/>
+                                                <field name="traitement_date" invisible="1"/>
+                                                <field name="is_rejection" invisible="1"/>
+                                            </group>
+                                        </group>
+                                    </div>
+                                </div><!-- ESPACE RESERVE AU SECRETAIRE EXECUTIF : groups="loan_mutual.secretaire_executif" -->
+                                <div class="col-12" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.secretaire_executive_pret_mutuel,loan_mutual.manager_pret_mutuel,loan_mutual.pca_pret_mutuel,loan_mutual.comptabilite_pret_mutuel">
+                                    <div class="p-2 rounded-3 border bg-light">
+                                        <h4 class="mb-4 d-flex align-items-center text-primary">
+                                            <i class="fa fa-user-tie me-2"/>
+                                            <span>ESPACE RESERVE AU SECRETAIRE EXECUTIF</span>
+                                        </h4>
+                                        <group>
+                                            <group>
+                                                <field name="loan_granted" widget="boolean_checkbox" readonly="not can_edit_se or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="loan_not_granted" widget="boolean_checkbox" readonly="not can_edit_se or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="rejection_reason" readonly="motif_rejet_readonly or not can_edit_se or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')" class="w-100"/>
+                                            </group>
+                                            <group>
+                                                <field name="final_approved_amount" readonly="not can_edit_se or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="amount_to_be_refunded_se" readonly="1"/>
+                                                <field name="budget_restant_se" readonly="1" invisible="1"/>
+                                                <field name="final_approved_amount_update" readonly="not can_edit_se or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')" invisible="1"/>
+                                                <field name="reason_for_sending_to_accounting" string="Motif d'envoie à la comptabilité" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')" class="w-100"/>
+                                            </group>
+                                        </group>
+                                    </div>
+                                </div><!-- ESPACE RESERVE AU PCA -->
+                                <div class="col-12" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.pca_pret_mutuel,loan_mutual.manager_pret_mutuel,loan_mutual.comptabilite_pret_mutuel">
+                                    <div class="p-2 rounded-3 border bg-light">
+                                        <h4 class="mb-4 d-flex align-items-center text-primary">
+                                            <i class="fa fa-user-shield me-2"/>
+                                            <span>ESPACE RESERVE AU PCA</span>
+                                        </h4>
+                                        <group>
+                                            <group>
+                                                <field name="approved_amount_pca" readonly="not can_edit_pca or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="amount_to_be_refunded_pca" readonly="1"/>
+                                                <field name="observation_pca" readonly="not can_edit_pca or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                            </group>
+                                            <group>
+                                                <field name="submission_date_pca" invisible="state == &apos;pending&apos;" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                                <field name="rejection_reason" invisible="state == &apos;pending&apos;" readonly="1" class="text-danger"/>
+                                            </group>
+                                        </group>
+                                    </div>
+                                </div><!-- ESPACE COMPTABILITE  -->
+                                <div class="col-12" invisible="state == &apos;pending&apos;" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.comptabilite_pret_mutuel,loan_mutual.manager_pret_mutuel,loan_mutual.secretariat_pret_mutuel">
+                                    <div class="p-2 rounded-3 border bg-light">
+                                        <h4 class="mb-4 d-flex align-items-center text-primary">
+                                            <i class="fa fa-calculator me-2"/>
+                                            <span>ESPACE RESERVE A LA COMPTABILITE ET FINANCE</span>
+                                        </h4>
+                                        <group>
+                                            <group>
+                                                <field name="check_amount" readonly="1"/>
+                                                <field name="check_number" readonly="not can_edit_compta or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')" size="10" string="N° Chèque  ★"/>
+                                                <field name="date_emission_cheque" readonly="state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')"/>
+                                            </group>
+                                            <group>
+                                                <field name="observation_comptabilite" readonly="not can_edit_compta or state in ('check_delivery', 'check_withdrawn', 'check_cancel', 'rejected')" invisible="state == &apos;pending&apos;"/>
+                                            </group>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- Chatter -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread" options="{&apos;display_log_button&apos;: True}"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+
+    <!--  ================================================= DEBUT WIZARD ===========================================================  -->
+
+    <!-- WIZARD POUR AFFICHER LE MODAL DU REJET  -->
+    <record id="view_loan_mutual_reject_wizard_form" model="ir.ui.view">
+        <field name="name">loan.mutual.reject.wizard.form</field>
+        <field name="model">loan.mutual.reject.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Motif du rejet">
+                <group>
+                    <field name="motif_rejet" placeholder="Veuillez saisir le motif du rejet..." required="1"/>
+                    <field name="loan_id" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="confirm_reject" string="Confirmer" type="object" class="btn-success"/>
+                    <button string="Annuler" class="btn-danger" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- WIZARD POUR AFFICHER LE MODAL D' ANNULATION DE CHEQUE  -->
+    <record id="view_check_cancel_wizard_form" model="ir.ui.view">
+        <field name="name">check.cancel.wizard.form</field>
+        <field name="model">check.cancel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Motif du rejet">
+                <group>
+                    <field name="motif_rejet" placeholder="Veuillez saisir le motif du rejet..." required="1"/>
+                    <field name="loan_id" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="confirm_cancel_check" string="Confirmer" type="object" class="btn-success"/>
+                    <button string="Annuler" class="btn-danger" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- WIZARD POUR AFFICHER LE MODAL DE RETRAIT DE CHEQUE  -->
+    <record id="view_check_withdrawn_wizard_form" model="ir.ui.view">
+        <field name="name">check.withdrawn.wizard.form</field>
+        <field name="model">check.withdrawn.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Motif du rejet">
+                <group>
+                    <field name="mois_debut_prevelement" placeholder="Veuillez saisir la  date de début du prélèvement" required="1"/>
+                    <field name="loan_id" invisible="1"/>
+                    <field name="create_date" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="confirm_withdrawn_check" string="Confirmer" type="object" class="btn-success"/>
+                    <button string="Annuler" class="btn-danger" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+        <!-- WIZARD POUR ENVOYER DIRECTEMENT LA DEMANDE PAR LA SE EN CAS D'INDISPONIBILITE DU PCA   -->
+    <record id="view_sending_to_accounting_wizard_form" model="ir.ui.view">
+        <field name="name">sending.to.accounting.wizard.form</field>
+        <field name="model">sending.to.accounting.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Motif du rejet">
+                <group>
+                    <field name="motif_envoie_comptabilite" placeholder="Veuillez saisir la  date de début du prélèvement" required="1"/>
+                    <field name="loan_id" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="confirm_sending_to_accounting" string="Confirmer" type="object" class="btn-success"/>
+                    <button string="Annuler" class="btn-danger" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <!--  ================================================= FIN WIZARD ===========================================================  -->
+
+
+    <record id="view_loan_mutual_tree" model="ir.ui.view">
+        <field name="name">loan.mutual.tree</field>
+        <field name="model">loan.mutual</field>
+        <field name="arch" type="xml">
+            <!-- <tree string="Demandes de Prêt Mutuel" decoration-success="agent_agree == True and state == 'se_validation' " decoration-danger="agent_agree == False and state == 'se_validation'"> -->
+            <tree string="Demandes de Prêt Mutuel" decoration-success="agent_agree == True and final_approved_amount_update == True and state == 'se_validation'"  decoration-danger="agent_agree == False and final_approved_amount_update == True and state == 'se_validation'">
+                <field name="reference" string="Réference"/>
+                <field name="employee_id" string="Matricule"/>
+                <field name="nom" string="Nom"/>
+                <field name="prenoms" string="Prénoms"/>
+                <field name="direction" string="Direction"/>
+                <field name="type_pret" string="Type de Prêt"/>
+                <field name="amount_requested" string="Montant Demandé"/>  
+                <field name="modalite_remboursement" string="Echéance"/>
+                <field name="mensualite" string="Mensualité"/> 
+                <field name="start_date_deduction"/> 
+                <field name="start_date_year_decution"/> 
+                <field name="agent_agree" string="" invisible="1"/>
+                <field name="final_approved_amount_update" string="" invisible="1"/>
+                <!-- <field name="create_date" string="Date de Demande"/> -->
+                <field name="state" string="Statut" widget="badge" 
+                    decoration-info="state in (&apos;pending&apos;, &apos;check_delivery&apos;)" 
+                    decoration-primary="state == &apos;in_treatment&apos;" 
+                    decoration-warning="state in (&apos;se_validation&apos;, &apos;pca_validation&apos;)" 
+                    decoration-success="state in (&apos;approved&apos;, &apos;check_withdrawn&apos;)" 
+                    decoration-danger="state == &apos;rejected&apos;"/>
+            </tree>
+        </field>
+    </record>
+    
+    <!-- Vue recherche avancée -->
+    <record id="view_loan_mutual_search" model="ir.ui.view">
+        <field name="name">loan.mutual.search</field>
+        <field name="model">loan.mutual</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher des demandes">
+                <field name="reference" string="Réference"/>
+                <field name="employee_id" string="Matricule"/>
+                <field name="nom" string="Nom"/>
+                <field name="prenoms" string="Prénoms"/>
+                <field name="matricule" string="Matricule"/>
+                <field name="email" string="Email"/>
+                <field name="telephone" string="Téléphone"/>
+                <field name="direction" string="Direction"/>
+                <field name="campaign_id" string="Campagne"/>
+                <filter string="Prêts Exceptionnelles" name="pending" domain="[(&apos;demande_exceptionnelle&apos;, &apos;=&apos;, True)]"/>
+                <filter string="Prêts En Attente" name="approved" domain="[(&apos;state&apos;, &apos;=&apos;, &apos;pending&apos;)]"/>
+                <filter string="Prêts Approuvées" name="approved" domain="[(&apos;state&apos;, &apos;=&apos;, &apos;approved&apos;)]"/>
+                <filter string="Prêts Soldés" name="is_on_sale" domain="[(&apos;is_on_sale&apos;, &apos;=&apos;, True)]"/>
+                <filter string="Prêts Non Soldés" name="is_on_sale" domain="[(&apos;is_on_sale&apos;, &apos;=&apos;, False)]"/>
+                <filter string="Prêts Rejetés" name="rejected" domain="[(&apos;state&apos;, &apos;=&apos;, &apos;rejected&apos;)]"/>
+                <filter string="Chèques Emis" name="check_delivery" domain="[(&apos;state&apos;, &apos;=&apos;, &apos;check_delivery&apos;)]"/>
+                <filter string="Chèques Retirés" name="check_withdrawn" domain="[(&apos;state&apos;, &apos;=&apos;, &apos;check_withdrawn&apos;)]"/>
+                <separator/>
+                <filter string="Homme" name="male" domain="[(&apos;sexe&apos;, &apos;=&apos;, &apos;homme&apos;)]"/>
+                <filter string="Femme" name="female" domain="[(&apos;sexe&apos;, &apos;=&apos;, &apos;femme&apos;)]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Direction" name="group_by_direction" context="{&apos;group_by&apos;: &apos;direction&apos;}"/>
+                    <filter string="Type de prêt" name="group_by_type_pret" context="{&apos;group_by&apos;: &apos;type_pret&apos;}"/>
+                    <filter string="Campagne" name="group_by_campaign" context="{&apos;group_by&apos;: &apos;campaign_id&apos;}"/><!-- <filter string="Date de demande" name="group_by_create_date" context="{'group_by': 'create_date:month'}"/> -->
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Action Window  qui renvoie toutes demandes avec tous les status pour les super admin + manager-->
+    <record id="action_loan_mutual_all" model="ir.actions.act_window">
+        <field name="name">Toutes les Demandes</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.super_admin_pret_mutuel&apos;))]"/>
+    </record>
+    
+    <!-- Action Window pour les Secrétaires : La liste des demandes en attentes -->
+    <record id="action_loan_mutual_pending" model="ir.actions.act_window">
+        <field name="name">Demandes en Attente</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[(&quot;state&quot;, &quot;=&quot;, &quot;pending&quot;)]</field>
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.secretariat_pret_mutuel&apos;))]"/>
+    </record>
+    
+    <!-- Action Window pour la Secrétaire : La liste des demandes en rejetées -->
+    <record id="action_loan_mutual_rejected" model="ir.actions.act_window">
+        <field name="name">Demandes Rejetées</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[(&quot;state&quot;, &quot;=&quot;, &quot;rejected&quot;)]</field>
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.secretariat_pret_mutuel&apos;))]"/>
+    </record>
+
+    <!-- Action Window pour la Secrétaire : La liste des chèques annulés -->
+    <record id="action_check_cancel" model="ir.actions.act_window">
+        <field name="name">Chèques Annulés</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[(&quot;state&quot;, &quot;=&quot;, &quot;check_cancel&quot;)]</field>
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.secretariat_pret_mutuel&apos;))]"/>
+    </record>
+
+    <!-- Action Window pour la commision de prêt -->
+    <record id="action_loan_mutual_cp" model="ir.actions.act_window">
+        <field name="name">Demandes en Attente</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[(&quot;state&quot;, &quot;=&quot;, &quot;in_treatment&quot;)]</field>
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.commission__pret_sociaux_pret_mutuel&apos;))]"/>
+    </record>
+    
+    <!-- Action Window pour la secrétaire exécutive -->
+    <record id="action_loan_mutual_se" model="ir.actions.act_window">
+        <field name="name">Demandes en Attente</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[(&quot;state&quot;, &quot;=&quot;, &quot;se_validation&quot;)]</field><!-- <field name="domain">['|', ("state", "=", "se_validation"), ("demande_exceptionnelle", "=", True)]</field> -->
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.secretaire_executive_pret_mutuel&apos;))]"/>
+    </record>
+    
+    <!-- Action Window pour la secrétaire exécutive -->
+    <record id="action_loan_mutual_pca" model="ir.actions.act_window">
+        <field name="name">Demandes en Attente</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[(&quot;state&quot;, &quot;=&quot;, &quot;pca_validation&quot;)]</field>
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.pca_pret_mutuel&apos;))]"/>
+    </record>
+    
+    <!-- Action Window pour la secrétaire exécutive -->
+    <record id="action_loan_mutual_compta" model="ir.actions.act_window">
+        <field name="name">Demandes Validées</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[(&quot;state&quot;, &quot;=&quot;, &quot;approved&quot;)]</field>
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.comptabilite_pret_mutuel&apos;))]"/>
+    </record>
+    
+    <!-- Action Window pour les Secrétaires : La liste des demandes dont les chèques ont été emis -->
+    <record id="action_loan_mutual_check_delivery" model="ir.actions.act_window">
+        <field name="name">Chèques Disponibles</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[(&quot;state&quot;, &quot;=&quot;, &quot;check_delivery&quot;)]</field>
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.secretariat_pret_mutuel&apos;)), (4, ref(&apos;loan_mutual.comptabilite_pret_mutuel&apos;))]"/>
+    </record>
+    
+    <!-- Action Window pour les Secrétaires : La liste des demandes dont les chèques ont été retiré -->
+    <record id="action_loan_mutual_check_withdrawn" model="ir.actions.act_window">
+        <field name="name">Chèques Retirés</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[(&quot;state&quot;, &quot;=&quot;, &quot;check_withdrawn&quot;)]</field>
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.secretariat_pret_mutuel&apos;))]"/>
+    </record>
+    
+    <!-- Action Window pour le PCA et Secretaire executive : La liste des demandes dont les chèques ont été emis -->
+    <record id="action_loan_mutual_dmnd_decaissee" model="ir.actions.act_window">
+        <field name="name">Demandes Decaissées</field>
+        <field name="res_model">loan.mutual</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[[&quot;state&quot;, &quot;in&quot;, [&quot;check_delivery&quot;, &quot;check_withdrawn&quot;]]]</field>
+        <field name="groups_id" eval="[(4, ref(&apos;loan_mutual.pca_pret_mutuel&apos;)), (4, ref(&apos;loan_mutual.secretaire_executive_pret_mutuel&apos;))]"/>
+    </record>
+    
+    <!-- Menu Items -->
+    <menuitem id="menu_loan_mutual_main" name="Demandes" parent="menu_mutual_root" action="action_loan_mutual_all" groups="loan_mutual.super_admin_pret_mutuel"/>
+
+    <menuitem id="menu_loan_mutual_pending" name="Demandes en Attente" sequence="1" parent="menu_mutual_root" action="action_loan_mutual_pending" groups="loan_mutual.secretariat_pret_mutuel"/>
+    <menuitem id="menu_loan_mutual_rejected" name="Demandes Rejetées" sequence="1" parent="menu_mutual_root" action="action_loan_mutual_rejected" groups="loan_mutual.secretariat_pret_mutuel"/>
+    <menuitem id="menu_loan_mutual_check_delivery" name="Chèques Disponibles " parent="menu_mutual_root" action="action_loan_mutual_check_delivery" groups="loan_mutual.secretariat_pret_mutuel,loan_mutual.comptabilite_pret_mutuel"/>
+    <menuitem id="menu_loan_mutual_check_withdrawn" name="Chèques Retirés " parent="menu_mutual_root" action="action_loan_mutual_check_withdrawn" groups="loan_mutual.secretariat_pret_mutuel,loan_mutual.comptabilite_pret_mutuel"/>
+    <menuitem id="menu_loan_mutual_check_cancel" name="Chèques Annulés " parent="menu_mutual_root" action="action_check_cancel" groups="loan_mutual.secretariat_pret_mutuel,loan_mutual.comptabilite_pret_mutuel"/>
+
+    <menuitem id="menu_loan_mutual_commission" sequence="1" name="Demandes en Traitement" parent="menu_mutual_root" action="action_loan_mutual_cp" groups="loan_mutual.commission__pret_sociaux_pret_mutuel,secretariat_pret_mutuel"/>
+    <menuitem id="menu_loan_mutual_secretaire_executive" sequence="1" name="Demandes en Validation" parent="menu_mutual_root" action="action_loan_mutual_se" groups="loan_mutual.secretaire_executive_pret_mutuel,secretariat_pret_mutuel"/>
+    <menuitem id="menu_loan_mutual_pca" name="Demandes en Attente" parent="menu_mutual_root" action="action_loan_mutual_pca" groups="loan_mutual.pca_pret_mutuel"/>
+    <menuitem id="menu_loan_mutual_pca_demandes_decaissees" name="Demandes Décaissées" parent="menu_mutual_root" action="action_loan_mutual_dmnd_decaissee" groups="loan_mutual.secretaire_executive_pret_mutuel,loan_mutual.pca_pret_mutuel,loan_mutual.commission__pret_sociaux_pret_mutuel"/>
+    <menuitem id="menu_loan_mutual_compta" name="Demandes Approuvées " parent="menu_mutual_root" action="action_loan_mutual_compta" groups="loan_mutual.comptabilite_pret_mutuel,loan_mutual.secretariat_pret_mutuel"/>
+</odoo>

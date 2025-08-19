@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vue Form (inchangée) -->
+    <record id="view_mutual_campaign_form" model="ir.ui.view">
+        <field name="name">mutual.campaign.form</field>
+        <field name="model">mutual.campaign</field>
+        <field name="arch" type="xml">
+            <form class="o_form_sheet">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,suivie,closed" invisible="1"/>
+                    
+                    <button name="action_open_campaign" 
+                            confirm="Voulez-vous ouvrir cette campagne ?" 
+                            type="object" string="Ouvrir" class="btn-success" 
+                            invisible="state == 'open' or state == 'closed' or state == 'suivie'"/>
+
+                    <button name="action_suivie_campaign" 
+                            confirm="Voulez-vous ouvrir le comité de validaton ?" 
+                            type="object" string="Suivi" class="btn-warning" 
+                            invisible="state == 'closed' or state == 'draft' or state == 'suivie'"/>
+
+                    <button name="action_close_campaign" 
+                            confirm="Voulez-vous clôturer cette campagne ?" 
+                            type="object" string="Clôturée" class="btn-danger" 
+                            invisible="state == 'closed' or state == 'draft' or state == 'open'"/>
+                </header>
+                
+                <!-- RUBAN  -->
+                    <widget name="web_ribbon" title="Clôturée" bg_color="bg-danger" invisible="state != 'closed'"/>
+                    <widget name="web_ribbon" title="En suivi" bg_color="bg-warning" invisible="state != 'suivie'"/>
+                    <widget name="web_ribbon" title="Brouillon" bg_color="bg-primary" invisible="state != 'draft'"/>
+                    <widget name="web_ribbon" title="Ouverte" bg_color="bg-success" invisible="state != 'open'"/>
+
+                <div class="row g-4">
+                    <!-- Informations fusionnées -->
+                    <div class="col-12">
+                        <div class="p-2 rounded-3 border bg-light">
+                            <h4 class="mb-4 d-flex align-items-center text-primary">
+                                <i class="fa fa-info-circle me-2"/>
+                                <span>Informations sur la campagne</span>
+                            </h4>
+                            <group>
+                                <group>
+                                    <field name="name" placeholder="Nom de la campagne..." readonly="state in ['open', 'closed']"/>
+                                    <field name="total_budget" readonly="state in ['open', 'closed', 'suivie', 'validation']"/>
+                                    <field name="budget_restant" readonly="1"/>
+                                    <field name="budget_depasse" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="mois"/>
+                                    <field name="responsable" readonly="state in ['open', 'closed', 'suivie', 'validation']"/>
+                                    <field name="post_responsable" readonly="state in ['open', 'closed', 'suivie', 'validation']"/>
+                                    <field name="description" readonly="state in ['open', 'closed', 'suivie', 'validation']"/>
+                                </group>
+                            </group>
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- SECTION DES INFORMATIONS DES RESPONSABLE A CONTACTER SUR LE TEMPLATE MAIL  -->
+                    <notebook>
+                        <page string="Informations des responsables à contacter" name="contacts">
+                            <div class="alert alert-info" role="alert">
+                                <strong>Note :</strong> Ces informations seront utilisées dans les communications par email aux demandeurs.
+                            </div>
+                                <group string="Informations des responsables à contacter">
+                                    <group>
+                                        <field name="responsable_1" placeholder="Nom du responsable 1"/>
+                                        <field name="contact_responsable_1" placeholder="Contact du responsable 1"/>
+                                    </group>
+                                    <group>
+                                        <field name="responsable_2" placeholder="Nom du responsable 2"/>
+                                        <field name="contact_responsable_2" placeholder="Contact du responsable 2"/>
+                                    </group>
+                                    <group>
+                                        <field name="responsable_3" placeholder="Nom du responsable 3"/>
+                                        <field name="contact_responsable_3" placeholder="Contact du responsable 3"/>
+                                    </group>
+                                    <group>
+                                        <field name="responsable_4" placeholder="Nom du responsable 4"/>
+                                        <field name="contact_responsable_4" placeholder="Contact du responsable 4"/>
+                                    </group>
+                                </group>
+                        </page>
+                    </notebook>
+
+                <!-- Ajout du Chatter -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste (inchangée) -->
+    <record id="view_mutual_campaign_tree" model="ir.ui.view">
+        <field name="name">mutual.campaign.tree</field>
+        <field name="model">mutual.campaign</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="mois"/>
+                <field name="total_budget"/>
+                <field name="budget_restant"/>
+                <field name="budget_depasse"/>
+                <field name="create_date"/>
+                <field name="state" widget="badge" 
+                    decoration-info="state == 'draft'" 
+                    decoration-success="state == 'open'"
+                    decoration-warning="state == 'validation'"
+                    decoration-primary="state == 'suivie'"
+                    decoration-danger="state == 'closed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue recherche avec les filtres (corrigée) -->
+    <record id="view_mutual_campaign_search" model="ir.ui.view">
+        <field name="name">mutual.campaign.search</field>
+        <field name="model">mutual.campaign</field>
+        <field name="arch" type="xml">
+            <search>
+                <!-- Champs de recherche basiques -->
+                <field name="name" string="Campagne"/>
+                <field name="responsable"/>
+                <field name="mois"/>
+                
+                <!-- Filtres pour l'état avec searchpanel -->
+                <!-- <searchpanel>
+                    <field name="state" string="État" enable_counters="1"/>
+                </searchpanel> -->
+                
+                <!-- Filtres pour l'état -->
+                <filter string="Brouillon" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Ouverte" name="open" domain="[('state', '=', 'open')]"/>
+                <filter string="En suivi" name="suivie" domain="[('state', '=', 'suivie')]"/>
+                <filter string="Clôturée" name="closed" domain="[('state', '=', 'closed')]"/>
+                
+                <separator/>
+                
+                <!-- Groupes -->
+                <group expand="0" string="Regrouper par">
+                    <filter string="Mois" name="group_mois" context="{'group_by': 'mois'}"/>
+                    <filter string="Date de création (mois)" name="group_create_date_month" context="{'group_by': 'create_date:month'}"/>
+                    <!-- <filter string="Date de création (trimestre)" name="group_create_date_quarter" context="{'group_by': 'create_date:quarter'}"/>
+                    <filter string="Date de création (année)" name="group_create_date_year" context="{'group_by': 'create_date:year'}"/> -->
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action avec recherche par défaut -->
+    <record id="action_mutual_campaign" model="ir.actions.act_window">
+        <field name="name">Campagnes de Prêt Mutuel</field>
+        <field name="res_model">mutual.campaign</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_mutual_campaign_search"/>
+        <field name="context">{'search_default_current_year': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre première campagne de prêt mutuel
+            </p>
+            <p>
+                Les campagnes vous permettent de gérer les périodes d'octroi de prêts mutuels.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu (inchangé) -->
+    <menuitem id="menu_mutual_root" name="Prêt MA-PAA"/>
+    <menuitem id="menu_mutual_campaign" sequence="1" name="Campagnes" parent="menu_mutual_root" action="action_mutual_campaign"/>
+</odoo>

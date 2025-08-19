@@ -1,0 +1,52 @@
+<!-- Badge/Sticker pour demande exceptionnelle -->
+
+
+<!-- Style CSS à ajouter dans l'assets_backend -->
+<template id="assets_backend_exceptional_badge" name="Exceptional Badge Assets" inherit_id="web.assets_backend">
+    <xpath expr="." position="inside">
+        <style>
+            /* Style du ruban */
+            .ribbon {
+                position: absolute;
+                right: -5px;
+                top: -5px;
+                z-index: 1;
+                overflow: hidden;
+                width: 150px;
+                height: 150px;
+                text-align: right;
+            }
+            .ribbon-top-right {
+                top: -10px;
+                right: -10px;
+            }
+            .ribbon-top-right::before,
+            .ribbon-top-right::after {
+                border-top-color: transparent;
+                border-right-color: transparent;
+            }
+            .ribbon-top-right::before {
+                top: 0;
+                left: 0;
+            }
+            .ribbon-top-right::after {
+                bottom: 0;
+                right: 0;
+            }
+            .ribbon-top-right span {
+                position: absolute;
+                top: 30px;
+                right: -25px;
+                transform: rotate(45deg);
+                width: 200px;
+                padding: 10px 0;
+                background-color: #dc3545;
+                color: white;
+                text-align: center;
+                font-size: 14px;
+                font-weight: bold;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            }
+        </style>
+    </xpath>
+</template>

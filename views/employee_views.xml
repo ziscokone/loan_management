@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Kanban -->
+    <record id="view_employee_paa_kanban" model="ir.ui.view">
+        <field name="name">paa.employee.kanban</field>
+        <field name="model">paa.employee</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile o_employee_kanban" default_group_by="direction">
+                <field name="matricule"/>
+                <field name="name"/>
+                <field name="prenoms"/>
+                <field name="direction"/>
+                <field name="anciennete"/>
+                
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill shadow-sm">
+                            <!-- En-tête avec dégradé de couleur -->
+                            <div class="o_kanban_header position-relative p-2" 
+                                t-attf-style="background: #003366; color: white !important;">
+                                <h5 class="text-white mb-0">
+                                    <field name="matricule"/>
+                                </h5>
+                            </div>
+    
+                            <!-- Corps de la carte -->
+                            <div class="o_kanban_details p-2">
+                                <!-- Informations principales -->
+                                <div class="mb-2">
+                                    <strong class="d-block text-primary mb-1 small">Nom et Prénoms</strong>
+                                    <h6 class="mb-0"><field name="name"/> <field name="prenoms"/></h6>
+                                </div>
+
+                                <div class="mb-2">
+                                    <strong class="d-block text-primary mb-1 small">Direction</strong>
+                                    <div class="text-muted small"><field name="direction"/></div>
+                                </div>
+
+                                <!-- Pied de carte -->
+                                <div class="o_kanban_record_bottom pt-1 border-top">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong class="text-primary small">Ancienneté</strong>
+                                        <span class="badge badge-info badge-pill small">
+                                            <field name="anciennete"/> ans
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue liste (tree) -->
+    <record id="view_employee_paa_tree" model="ir.ui.view">
+        <field name="name">paa.employee.tree</field>
+        <field name="model">paa.employee</field>
+        <field name="arch" type="xml">
+            <tree string="Employés">
+                <field name="matricule"/>
+                <field name="name"/>
+                <field name="prenoms"/>
+                <field name="direction"/>
+                <field name="categorie_actuelle"/>
+                <field name="date_embauche" options="{'datepicker': {'format': 'dd/MM/yyyy'}}"/>
+                <field name="anciennete"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue formulaire (form) -->
+    <record id="view_employee_paa_form" model="ir.ui.view">
+        <field name="name">paa.employee.form</field>
+        <field name="model">paa.employee</field>
+        <field name="arch" type="xml">
+            <form string="Employé" class="o_form_view">
+                <sheet>
+                    <div class="position-relative rounded-3 bg-white shadow-sm mx-4 my-3">
+                        <!-- Contenu principal -->
+                        <div class="p-4">
+                            <div class="row g-4">
+                                <!-- Informations personnelles -->
+                                <div class="col-12">
+                                    <div class="p-2 rounded-3 border bg-light">
+                                        <h4 class="mb-4 d-flex align-items-center text-primary">
+                                            <i class="fa fa-user me-2"/>
+                                            <span>Informations Personnelles</span>
+                                        </h4>
+                                        <group>
+                                            <group>
+                                                <field name="matricule" class="h2"/>
+                                                <field name="name"/>
+                                                <field name="prenoms"/>
+                                                <field name="sexe"/>
+                                                <field name="date_naissance"/>
+                                                <field name="age"/>
+                                                <field name="annee_naissance"/>
+                                            </group>
+                                            <group>
+                                                <field name="date_embauche"/>
+                                                <field name="date_prise_service"/>
+                                                <field name="annee_embauche"/>
+                                                <field name="anciennete"/>
+                                                <field name="annee_en_cours"/>
+                                            </group>
+                                        </group>
+                                    </div>
+                                </div>
+
+                                <!-- Informations professionnelles -->
+                                <div class="col-12">
+                                    <div class="p-2 rounded-3 border bg-light">
+                                        <h4 class="mb-4 d-flex align-items-center text-primary">
+                                            <i class="fa fa-briefcase me-2"/>
+                                            <span>Informations Professionnelles</span>
+                                        </h4>
+                                        <group>
+                                            <group>
+                                                <field name="fonction"/>
+                                                <field name="categorie_actuelle"/>
+                                                <field name="typecat"/>
+                                            </group>
+                                            <group>
+                                                <field name="services"/>
+                                                <field name="sites"/>
+                                                <field name="direction"/>
+                                            </group>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Historique des prêts -->
+                            <div class="mt-4">
+                                <div class="bg-light p-2">
+                                    <h4 class="mb-2 d-flex align-items-center text-primary">
+                                        <i class="fa fa-history me-2"/>
+                                        <span>Historique des prêts</span>
+                                    </h4>
+                                    <div class="border bg-white rounded-3 shadow-sm">
+                                        <field name="loan_history_ids">
+                                            <tree create="0" delete="0" edit="0">
+                                                <field name="campaign_id"/>
+                                                <field name="approved_amount"/>
+                                            </tree>
+                                        </field>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Vue recherche (search) -->
+    <record id="view_employee_paa_search" model="ir.ui.view">
+        <field name="name">paa.employee.search</field>
+        <field name="model">paa.employee</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un employé">
+                <field name="matricule"/>
+                <field name="name"/>
+                <field name="prenoms"/>
+                <field name="fonction"/>
+                <field name="services"/>
+                <field name="sites"/>
+                <separator/>
+                <filter string="Hommes" name="masculin" domain="[('sexe', '=', 'masculin')]"/>
+                <filter string="Femmes" name="feminin" domain="[('sexe', '=', 'feminin')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Service" name="services" context="{'group_by': 'services'}"/>
+                    <filter string="Site" name="site" context="{'group_by': 'sites'}"/>
+                    <filter string="Direction" name="direction" context="{'group_by': 'direction'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action window -->
+    <record id="action_employee" model="ir.actions.act_window">
+        <field name="name">Employés</field>
+        <field name="res_model">paa.employee</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_employee_paa_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre premier employé
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_employes_paa" name="Employés" parent="menu_mutual_root" action="action_employee" groups="loan_mutual.super_admin_pret_mutuel,loan_mutual.manager_pret_mutuel"/>
+</odoo>

@@ -1,0 +1,113 @@
+/* Style amélioré pour le formulaire de connexion Odoo 17 */
+
+.oe_login_form {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.oe_login_form:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Logo */
+.oe_login_form .company_logo {
+    display: block;
+    margin: 0 auto 25px;
+    max-width: 180px;
+    height: auto;
+}
+
+/* Titre */
+.oe_login_form h2 {
+    text-align: center;
+    color: #4c4c4c;
+    font-size: 24px;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+/* Champs de formulaire */
+.oe_login_form .form-control {
+    height: 46px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    padding: 10px 15px;
+    font-size: 14px;
+    transition: all 0.3s;
+    box-shadow: none;
+    margin-bottom: 15px;
+}
+
+.oe_login_form .form-control:focus {
+    border-color: #7c7bad;
+    box-shadow: 0 0 0 0.2rem rgba(124, 123, 173, 0.25);
+}
+
+/* Labels */
+.oe_login_form label {
+    color: #555;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+/* Bouton de connexion */
+.oe_login_form .btn-primary {
+    background-color: #7c7bad;
+    border: none;
+    width: 100%;
+    height: 46px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.oe_login_form .btn-primary:hover, 
+.oe_login_form .btn-primary:focus {
+    background-color: #5d5d8d;
+    box-shadow: 0 5px 15px rgba(124, 123, 173, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Liens de récupération et inscription */
+.oe_login_form .oe_login_buttons {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.oe_login_form .oe_login_buttons a {
+    color: #7c7bad;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s;
+    margin: 0 10px;
+}
+
+.oe_login_form .oe_login_buttons a:hover {
+    color: #5d5d8d;
+    text-decoration: underline;
+}
+
+/* Messages d'erreur */
+.oe_login_form .alert {
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* Adaptation mobile */
+@media (max-width: 576px) {
+    .oe_login_form {
+        max-width: 100%;
+        margin: 20px;
+        padding: 20px;
+    }
+}

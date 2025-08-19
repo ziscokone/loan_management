@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo><!-- Vue Form -->
+    <record id="view_dashboard_mutual_form" model="ir.ui.view">
+        <field name="name">dashboard.mutual.form</field>
+        <field name="model">dashboard.mutual</field>
+        <field name="arch" type="xml">
+            <form class="o_form_view o_form_sheet">
+                <group>
+                    <group>
+                        <field name="date_debut"/>
+                        <field name="date_fin"/>
+                    </group>
+                    <group>
+                        <field name="direction_id" options="{&apos;no_create&apos;: True, &apos;no_edit&apos;: True}"/>
+                    </group>
+                </group>
+                <br/>
+                <br/><!-- TABLEAU DE BORD  -->
+                <div class="container-fluid">
+                    <div class="row"><!-- Bloc pour le nombre total de demandes -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block primary-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-users fa-2x text-info me-2"></i>
+                                    <h5 class="font-weight-bold text-info mb-0">Nombre Total de Demande</h5>
+                                </div>
+                                <field name="total_demandes" readonly="1" class="h5 font-weight-bold text-info o_field_widget"></field>
+                            </div>
+                        </div><!-- Bloc pour le montant total des demandes -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-money fa-2x text-primary me-2"></i>
+                                    <h5 class="font-weight-bold text-primary mb-0">Nombre de Prêts Soldés</h5>
+                                </div>
+                                <field name="pret_solde" readonly="1" class="h5 font-weight-bold text-primary o_field_widget"></field><!-- <strong class="text-primary"> FCFA</strong> -->
+                            </div>
+                        </div><!-- Bloc pour le montant accordé  -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-money fa-2x text-success me-2"></i>
+                                    <h5 class="font-weight-bold text-success mb-0">Montant de Prêts Soldés</h5>
+                                </div>
+                                <field name="montant_total_pret_solde" readonly="1" class="h5 font-weight-bold text-success o_field_widget"></field>
+                                <strong class="text-success"> FCFA</strong>
+                            </div>
+                        </div><!-- Bloc pour le montant accordé  -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-check-circle fa-2x text-danger me-2"></i>
+                                    <h5 class="font-weight-bold text-danger mb-0">Nombre de Prêts Non Soldés</h5>
+                                </div>
+                                <field name="pret_nom_solde" readonly="1" class="h5 font-weight-bold text-danger o_field_widget"></field><!-- <strong class="text-success"> FCFA</strong> -->
+                            </div>
+                        </div><!-- Bloc pour le budget prévisionnel  -->
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-money fa-2x text-danger me-2"></i>
+                                    <h5 class="font-weight-bold text-danger mb-0">Montant Prêt non Soldés</h5>
+                                </div>
+                                <strong>
+                                    <field name="montant_total_pret_non_solde" readonly="1" class="h5 font-weight-bold text-danger o_field_widget"></field>
+                                </strong>
+                                <strong class="text-danger"> FCFA</strong>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 mb-4">
+                            <div class="custom-block warning-block p-3 text-center rounded shadow-lg">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-money fa-2x text-warning me-2"></i>
+                                    <h5 class="font-weight-bold text-warning mb-0">Nombre de Demandes Exceptionnelles</h5>
+                                </div>
+                                <field name="demandes_exceptionnelles" readonly="1" class="h5 font-weight-bold text-warning o_field_widget"></field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <br/>
+            </form>
+        </field>
+    </record><!-- Action -->
+    <record id="action_dashboard_mutual" model="ir.actions.act_window">
+        <field name="name">Tableau de Bord</field>
+        <field name="res_model">dashboard.mutual</field>
+        <field name="view_mode">form</field>
+    </record>
+    <menuitem id="menu_dashboard_mutual" name="Tableau de Bord" parent="menu_mutual_root" action="action_dashboard_mutual" sequence="1"/>
+</odoo>

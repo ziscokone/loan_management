@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Super Admin Prêt mutuel -->
+    <record model="res.groups" id="super_admin_pret_mutuel">
+        <field name="name">Super Admin Prêt Mutuel</field>
+    </record>
+
+    <!-- Secrétariat Prêt mutuel -->
+    <record model="res.groups" id="secretariat_pret_mutuel">
+        <field name="name">Secrétariat Prêt Mutuel </field>
+    </record>
+
+    <!-- Commission prêt Sociaux Prêt mutuel -->
+    <record model="res.groups" id="commission__pret_sociaux_pret_mutuel">
+        <field name="name">Commission Prêt Sociaux</field>
+    </record>
+
+
+    <!-- Secrétaire Exécutive Prêt mutuel -->
+    <record model="res.groups" id="secretaire_executive_pret_mutuel">
+        <field name="name">Secrétaire Exécutive Prêt Mutuel</field>
+    </record>
+
+
+    <!-- PCA Prêt mutuel -->
+    <record model="res.groups" id="pca_pret_mutuel">
+        <field name="name">PCA Prêt Mutuel</field>
+    </record>
+
+    <!-- Comptabilité Prêt mutuel -->
+    <record model="res.groups" id="comptabilite_pret_mutuel">
+        <field name="name">Comptabilité Prêt Mutuel</field>
+    </record>
+
+    <!-- Manager Prêt mutuel -->
+    <record model="res.groups" id="manager_pret_mutuel">
+        <field name="name">Manager Prêt Scolaire </field>
+    </record>
+</odoo>

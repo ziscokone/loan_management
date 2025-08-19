@@ -1,0 +1,14 @@
+.o_list_view thead {
+    background-color: white;
+}
+
+
+th {
+    color: #0099CC !important;
+    font-weight: bold;
+}
+
+tr {
+    color: black !important;
+    /* font-weight: bold; */
+}
