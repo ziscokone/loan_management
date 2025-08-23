@@ -17,10 +17,10 @@ class LoanApplication(models.Model):
 
     # Champs de la demande
     reference = fields.Char(string='Réference', readonly=True, default='/')
-    amount_requested = fields.Integer(string='Montant Demandé',  tracking=True)
-    approved_amount = fields.Integer(string="Montant Accordé", tracking=True)
-    email = fields.Char(string='Email', tracking=True)
-    telephone = fields.Char(string='Téléphone', tracking=True)
+    amount_requested = fields.Integer(string='Montant Demandé',  tracking=True, readonly="campaign_state == 'suivie'")
+    approved_amount = fields.Integer(string="Montant Accordé", tracking=True, readonly="campaign_state == 'suivie'")
+    email = fields.Char(string='Email', tracking=True, readonly="campaign_state == 'suivie'")
+    telephone = fields.Char(string='Téléphone', tracking=True, readonly="campaign_state == 'suivie'")
     create_date = fields.Datetime(
         string='Date Création',
         default=fields.Datetime.now,
@@ -39,6 +39,7 @@ class LoanApplication(models.Model):
         string="Modalité de Remboursement",
         required=True,
         help="Durée du remboursement en mois.",
+        readonly="campaign_state == 'suivie'",
         tracking=True
     )
     
@@ -67,8 +68,8 @@ class LoanApplication(models.Model):
        store=True)
 
     # ---------------------- RELATIONS ---------------------- 
-    campaign_id = fields.Many2one('loan.campaign', string='Campagne', tracking=True)
-    employee_id = fields.Many2one('paa.employee', string='Matricule', tracking=True)
+    campaign_id = fields.Many2one('loan.campaign', string='Campagne', tracking=True, readonly="campaign_state == 'suivie'")
+    employee_id = fields.Many2one('paa.employee', string='Matricule', tracking=True, readonly="campaign_state == 'suivie'")
     ligne_versement_ids = fields.One2many('ligne.versement', 'loan_application_id')
 
     employee_loan_history_ids = fields.One2many(
@@ -99,9 +100,23 @@ class LoanApplication(models.Model):
     sexe = fields.Selection([('masculin', 'Masculin'), ('feminin', 'Féminin')], string='Sexe', tracking=True, related="employee_id.sexe", store=True, readonly=True)
     anciennete = fields.Char(string='Ancienneté', related="employee_id.anciennete_employe_paa", store=True, readonly=True)
 
-
+    fields_readonly = fields.Boolean(
+        string='Champs en lecture seule',
+        compute='_compute_readonly_fields',
+        invisible=True,
+        store=False,
+    )
 
     # ---------------------------------------------- MÉTHODES ------------------------------------------------------ 
+
+    # Fonction pour empêcher la modification  des champs  quand la campagne passe en suivi
+    @api.depends('campaign_state')
+    def _compute_readonly_fields(self):
+        """Calculer si les champs doivent être en lecture seule selon l'état de la campagne."""
+        for record in self:
+            record.fields_readonly = record.campaign_state == 'suivie'
+
+
     @api.depends('employee_id')
     def _compute_employee_loan_history(self):
         for record in self:
@@ -189,44 +204,61 @@ class LoanApplication(models.Model):
 
 
 
-
     # CALCUL DE LA MENSUALITE 
-    @api.depends('amount_requested', 'modalite_remboursement')
+    @api.depends('amount_requested', 'approved_amount', 'modalite_remboursement')
     def _compute_mensualite(self):
-        """Calculer la mensualité en fonction du montant demandé et de la durée."""
+        """Calculer la mensualité en fonction du montant accordé (priorité) ou demandé et de la durée."""
         for record in self:
-            record.montant_restant = record.amount_requested
-            if record.modalite_remboursement and record.amount_requested:
-                record.mensualite = int(record.amount_requested / int(record.modalite_remboursement))
+            if record.modalite_remboursement:
+                # Prioriser le montant accordé s'il est défini, sinon utiliser le montant demandé
+                montant_base = record.approved_amount if record.approved_amount else record.amount_requested
+                if montant_base:
+                    record.mensualite = int(montant_base / int(record.modalite_remboursement))
+                else:
+                    record.mensualite = 0
             else:
                 record.mensualite = 0
 
 
 
-    # PAR DEFAUT ATTRIBUER LE MONTANT DEMANDE AU MONTANT ACCORDE 
     @api.onchange('approved_amount')
-    def _compute_amount_requested(self):
-        amount_approved_2 = 0
+    def _onchange_approved_amount(self):
+        """Recalculer la mensualité quand le montant accordé change."""
         for record in self:
-            record.montant_restant = record.approved_amount
-            amount_approved_2 = record.approved_amount
-            if record.modalite_remboursement and amount_approved_2:
-                record.mensualite = int(amount_approved_2 / int(record.modalite_remboursement))
-            if amount_approved_2 == 0:
-                record.mensualite = 0
+            if record.approved_amount < 0:
+                raise ValidationError("Le montant accordé doit être strictement positif.")
+            
+            if record.approved_amount > record.amount_requested:
+                record.approved_amount = record.amount_requested
+                raise ValidationError("Le montant accordé ne peut pas dépasser le montant demandé.")
+
+
+    # PAR DEFAUT ATTRIBUER LE MONTANT DEMANDE AU MONTANT ACCORDE 
+    # @api.onchange('approved_amount')
+    # def _compute_amount_requested(self):
+    #     amount_approved_2 = 0
+    #     for record in self:
+    #         record.montant_restant = record.approved_amount
+    #         amount_approved_2 = record.approved_amount
+    #         if record.modalite_remboursement and amount_approved_2:
+    #             record.mensualite = int(amount_approved_2 / int(record.modalite_remboursement))
+    #         if amount_approved_2 == 0:
+    #             record.mensualite = 0
 
 
 
     # FONCTION DE CALCUL DU MONTANT RESTANT A REMBOURSER EN FONCTION DES VERSEMENTS EFFECTUER 
-    @api.depends('approved_amount', 'ligne_versement_ids', 'ligne_versement_ids.montant_paye')
+    @api.depends('approved_amount', 'amount_requested', 'ligne_versement_ids', 'ligne_versement_ids.montant_paye')
     def _compute_montant_restant(self):
         """
         Calculer le montant restant en déduisant la somme des versements 
-        du montant accordé et empêcher uniquement les nouveaux versements si le montant restant est 0
+        du montant accordé (priorité) ou du montant demandé
         """
         for record in self:
             total_verse = sum(record.ligne_versement_ids.mapped('montant_paye'))
-            montant_restant = record.approved_amount - total_verse
+            # Utiliser le montant accordé s'il est défini, sinon le montant demandé
+            montant_base = record.approved_amount if record.approved_amount else record.amount_requested
+            montant_restant = montant_base - total_verse
 
             record.montant_restant = montant_restant if montant_restant > 0 else 0
             
@@ -364,7 +396,7 @@ class LoanApplication(models.Model):
             _logger.info(
                 "Mail de validation envoyé avec succès pour la demande %s (ID mail: %s)", 
                 self.reference, 
-                mail_id
+                # mail_id
             )
             return True
                 

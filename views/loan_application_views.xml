@@ -47,14 +47,14 @@
                                         </h4>
                                         <group>
                                             <group>
-                                                <field name="campaign_id" options="{&apos;no_create&apos;: True, &apos;no_edit&apos;: True}" domain="[&apos;|&apos;, (&apos;state&apos;, &apos;=&apos;, &apos;open&apos;), (&apos;state&apos;, &apos;=&apos;, &apos;validation&apos;)]" readonly="campaign_state == &apos;suivie&apos;"/>
+                                                <field name="campaign_id" options="{&apos;no_create&apos;: True, &apos;no_edit&apos;: True}" domain="[&apos;|&apos;, (&apos;state&apos;, &apos;=&apos;, &apos;open&apos;), (&apos;state&apos;, &apos;=&apos;, &apos;validation&apos;)]" readonly="campaign_state == 'closed'"/>
                                                 <field name="create_date"/>
                                                 <field name="campaign_state" invisible="1"/>
-                                                <field name="amount_requested" class="text-success" readonly="campaign_state == &apos;suivie&apos;"/>
-                                                <field name="approved_amount" widget="formatted_integer" readonly="campaign_state == &apos;suivie&apos;" class="text-primary"/>
+                                                <field name="amount_requested" class="text-success" readonly="campaign_state == 'closed'"/>
+                                                <field name="approved_amount" widget="formatted_integer" readonly="campaign_state == 'closed'" class="text-primary"/>
                                             </group>
                                             <group>
-                                                <field name="modalite_remboursement" readonly="campaign_state == &apos;suivie&apos;"/>
+                                                <field name="modalite_remboursement" readonly="campaign_state == 'closed'"/>
                                                 <field name="mensualite" readonly="1"/>
                                                 <field name="montant_restant" readonly="1" class="fw-bold"/>
                                             </group>
@@ -70,7 +70,7 @@
                                         </h4>
                                         <group>
                                             <group>
-                                                <field name="employee_id"/>
+                                                <field name="employee_id" readonly="campaign_state == 'closed'"/>
                                                 <field name="matricule" invisible="1"/>
                                                 <field name="nom" readonly="1"/>
                                                 <field name="prenoms" readonly="1"/>
@@ -78,8 +78,8 @@
                                                 <field name="sexe" readonly="1"/>
                                             </group>
                                             <group>
-                                                <field name="email" widget="email" readonly="campaign_state == &apos;suivie&apos;"/>
-                                                <field name="telephone" widget="phone" readonly="campaign_state == &apos;suivie&apos;"/>
+                                                <field name="email" widget="email" readonly="campaign_state == 'closed'"/>
+                                                <field name="telephone" widget="phone" readonly="campaign_state == 'closed'"/>
                                                 <field name="direction" readonly="1"/>
                                                 <field name="typecategorie" readonly="1"/>
                                                 <field name="anciennete" readonly="1"/>
